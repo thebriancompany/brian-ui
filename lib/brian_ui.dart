@@ -11,6 +11,7 @@ library;
 
 export 'src/accordion/brian_accordion.dart';
 export 'src/alert_dialog/brian_alert_dialog.dart';
+export 'src/bottom_sheet/brian_bottom_sheet.dart';
 export 'src/button/brian_button.dart';
 export 'src/button_group/brian_button_group.dart';
 export 'src/color/brian_banner_colors.dart';
