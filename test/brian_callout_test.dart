@@ -157,6 +157,49 @@ void main() {
     }
   });
 
+  testWidgets('읽기 전용으로 전환 후 다시 활성화해도 이전 포커스 테두리가 남지 않는다', (tester) async {
+    final focus = FocusNode();
+    addTearDown(focus.dispose);
+    Widget build({required bool actionable}) => host(
+      BrianCallout(
+        description: const Text('배송 확인'),
+        focusNode: focus,
+        onPressed: actionable ? () {} : null,
+      ),
+    );
+    Decoration? focusDecoration() => tester
+        .widgetList<Container>(
+          find.descendant(
+            of: find.byType(BrianCallout),
+            matching: find.byType(Container),
+          ),
+        )
+        .first
+        .foregroundDecoration;
+
+    await tester.pumpWidget(build(actionable: true));
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    focus.requestFocus();
+    await tester.pumpAndSettle();
+    expect(focus.hasPrimaryFocus, isTrue);
+    expect(focusDecoration(), isNotNull);
+
+    await tester.pumpWidget(build(actionable: false));
+    await tester.pumpAndSettle();
+    expect(focus.hasPrimaryFocus, isFalse);
+    expect(focusDecoration(), isNull);
+
+    await tester.pumpWidget(build(actionable: true));
+    await tester.pumpAndSettle();
+    expect(focus.hasPrimaryFocus, isFalse);
+    expect(focusDecoration(), isNull);
+
+    focus.requestFocus();
+    await tester.pumpAndSettle();
+    expect(focus.hasPrimaryFocus, isTrue);
+    expect(focusDecoration(), isNotNull);
+  });
+
   testWidgets('닫기는 요청만 전달하고 보조 동작은 독립적으로 실행된다', (tester) async {
     var dismissed = 0;
     var action = 0;

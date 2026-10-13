@@ -75,7 +75,10 @@ class _BrianCalloutState extends State<BrianCallout> {
   @override
   void didUpdateWidget(BrianCallout oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.onPressed == null) _pressed = false;
+    if (widget.onPressed == null) {
+      _pressed = false;
+      _focused = false;
+    }
   }
 
   @override
