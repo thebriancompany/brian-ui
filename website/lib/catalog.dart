@@ -118,6 +118,20 @@ const pages = [
     source: 'doc/components/checkbox/checkbox.md',
   ),
   DocPage(
+    '/components/divider',
+    'Divider',
+    'COMPONENTS',
+    '섹션과 반복 항목 사이의 관계를 드러내는 구분선.',
+    source: 'doc/components/divider/divider.md',
+  ),
+  DocPage(
+    '/components/scroll-fog',
+    'Scroll Fog',
+    'COMPONENTS',
+    '스크롤 경계에서 콘텐츠를 부드럽게 연결하는 그라디언트.',
+    source: 'doc/components/scroll_fog/scroll_fog.md',
+  ),
+  DocPage(
     '/foundations/color-reference',
     '전체 색상값',
     'REFERENCE',

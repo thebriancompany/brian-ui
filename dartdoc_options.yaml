@@ -42,6 +42,12 @@ dartdoc:
     Checkbox:
       markdown: doc/components/checkbox/checkbox.md
       displayName: 체크박스
+    Divider:
+      markdown: doc/components/divider/divider.md
+      displayName: 구분선
+    ScrollFog:
+      markdown: doc/components/scroll_fog/scroll_fog.md
+      displayName: 스크롤 포그
     ColorReference:
       markdown: doc/foundations/color/color_reference.md
       displayName: 색상값
@@ -64,5 +70,7 @@ dartdoc:
     - Badge
     - Callout
     - Checkbox
+    - Divider
+    - ScrollFog
     - ColorReference
     - Contrast
