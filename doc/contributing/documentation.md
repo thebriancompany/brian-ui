@@ -95,8 +95,9 @@ Flutter 설치의 `bin/dart`를 PATH로 실행하며, 캐시 안의 Dart 바이�
 검증되는 것은 아닙니다. 주석의 코드 블록도 자동 테스트가 아닙니다.
 
 README와 category Markdown은 저장소와 생성된 사이트에서 서로 다른 경로로
-열립니다. 현재 README 및 category 가이드의 저장소 파일 참조는 `doc/...`처럼
-코드 경로로 표기하고, API 사이트에서는 category 메뉴로 이동합니다.
+열립니다. README의 디렉터리 안내는 GitHub 저장소 URL로 연결합니다.
+category 가이드의 저장소 파일 참조는 `doc/...`처럼 코드 경로로 표기하고,
+API 사이트에서는 category 메뉴로 이동합니다.
 Markdown 상대 링크를 추가할 때는 두 환경을 모두 검증합니다. 경고를 없애기
 위해 검증하지 않은 외부 URL로 바꾸거나 생성 HTML을 직접 고치지 않습니다.
 
