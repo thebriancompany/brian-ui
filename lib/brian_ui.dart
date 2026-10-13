@@ -1,4 +1,4 @@
-/// Brian UI의 독립적인 색상·타이포그래피·그림자·모서리·간격·테마와 버튼·아코디언·알림 다이얼로그를 제공합니다.
+/// Brian UI의 독립적인 색상·타이포그래피·그림자·모서리·간격·테마와 버튼·아코디언·알림 다이얼로그·콜아웃을 제공합니다.
 ///
 /// [BrianTheme]으로 테마를 제공하고 `BrianTheme.of(context).colors`로
 /// 역할 색상을 읽습니다. 일반 콘텐츠는 팔레트 값보다 역할 색상을 우선합니다.
@@ -12,6 +12,7 @@ library;
 export 'src/accordion/brian_accordion.dart';
 export 'src/alert_dialog/brian_alert_dialog.dart';
 export 'src/button/brian_button.dart';
+export 'src/callout/brian_callout.dart';
 export 'src/color/brian_banner_colors.dart';
 export 'src/color/brian_background_colors.dart';
 export 'src/color/brian_color_scale.dart';
