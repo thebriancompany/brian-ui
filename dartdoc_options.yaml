@@ -1,0 +1,20 @@
+dartdoc:
+  categories:
+    Color:
+      markdown: doc/foundations/color/color.md
+      displayName: 색상
+    Theme:
+      markdown: doc/theming/overview.md
+      displayName: 테마
+    ColorReference:
+      markdown: doc/foundations/color/color_reference.md
+      displayName: 색상값
+    Contrast:
+      markdown: doc/foundations/color/color_contrast.md
+      displayName: 대비
+  showUndocumentedCategories: true
+  categoryOrder:
+    - Color
+    - Theme
+    - ColorReference
+    - Contrast
