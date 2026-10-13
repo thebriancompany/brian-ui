@@ -61,6 +61,8 @@ void main() {
   testWidgets('라이트·다크의 모든 의미 색상과 스타일이 테마를 따른다', (tester) async {
     for (final theme in [BrianThemeData.light, BrianThemeData.dark]) {
       final bg = theme.colors.background;
+      final palette = theme.colors.palette;
+      final dark = theme.brightness == Brightness.dark;
       final fg = theme.colors.foreground;
       final stroke = theme.colors.stroke;
       final expected = [
@@ -79,14 +81,14 @@ void main() {
           stroke.brandWeak,
         ),
         (
-          bg.informativeSolid,
+          dark ? palette.blue.step500 : palette.blue.step800,
           bg.informativeWeak,
           fg.onInformativeSolid,
           fg.informativeContrast,
           stroke.informativeWeak,
         ),
         (
-          bg.positiveSolid,
+          dark ? palette.green.step500 : palette.green.step800,
           bg.positiveWeak,
           fg.onPositiveSolid,
           fg.positiveContrast,
@@ -100,7 +102,7 @@ void main() {
           stroke.warningWeak,
         ),
         (
-          bg.criticalSolid,
+          dark ? palette.red.step500 : palette.red.step800,
           bg.criticalWeak,
           fg.onCriticalSolid,
           fg.criticalContrast,
@@ -139,6 +141,41 @@ void main() {
             );
           }
         }
+      }
+    }
+  });
+
+  testWidgets('기본 테마의 모든 solid 배지는 일반 텍스트 대비 4.5:1을 충족한다', (tester) async {
+    for (final theme in [BrianThemeData.light, BrianThemeData.dark]) {
+      for (final tone in BrianBadgeTone.values) {
+        await tester.pumpWidget(
+          host(
+            BrianBadge(
+              label: '상태',
+              tone: tone,
+              variant: BrianBadgeVariant.solid,
+            ),
+            theme: theme,
+          ),
+        );
+        final box = tester.widget<DecoratedBox>(
+          find.descendant(
+            of: find.byType(BrianBadge),
+            matching: find.byType(DecoratedBox),
+          ),
+        );
+        final background = (box.decoration as ShapeDecoration).color!;
+        final foreground = tester.widget<Text>(find.text('상태')).style!.color!;
+        final first = foreground.computeLuminance();
+        final second = background.computeLuminance();
+        final ratio = first > second
+            ? (first + 0.05) / (second + 0.05)
+            : (second + 0.05) / (first + 0.05);
+        expect(
+          ratio,
+          greaterThanOrEqualTo(4.5),
+          reason: '${theme.brightness} / $tone',
+        );
       }
     }
   });

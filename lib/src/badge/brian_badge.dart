@@ -50,8 +50,11 @@ class BrianBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = BrianTheme.of(context);
     final bg = theme.colors.background;
+    final palette = theme.colors.palette;
+    final dark = theme.brightness == Brightness.dark;
     final fg = theme.colors.foreground;
     final stroke = theme.colors.stroke;
+    // 작은 상태 라벨에는 공통 solid 배경보다 대비가 높은 팔레트 단계를 씁니다.
     final (solid, weak, onSolid, foreground, border) = switch (tone) {
       BrianBadgeTone.neutral => (
         bg.neutralSolid,
@@ -68,14 +71,14 @@ class BrianBadge extends StatelessWidget {
         stroke.brandWeak,
       ),
       BrianBadgeTone.informative => (
-        bg.informativeSolid,
+        dark ? palette.blue.step500 : palette.blue.step800,
         bg.informativeWeak,
         fg.onInformativeSolid,
         fg.informativeContrast,
         stroke.informativeWeak,
       ),
       BrianBadgeTone.positive => (
-        bg.positiveSolid,
+        dark ? palette.green.step500 : palette.green.step800,
         bg.positiveWeak,
         fg.onPositiveSolid,
         fg.positiveContrast,
@@ -89,7 +92,7 @@ class BrianBadge extends StatelessWidget {
         stroke.warningWeak,
       ),
       BrianBadgeTone.critical => (
-        bg.criticalSolid,
+        dark ? palette.red.step500 : palette.red.step800,
         bg.criticalWeak,
         fg.onCriticalSolid,
         fg.criticalContrast,
