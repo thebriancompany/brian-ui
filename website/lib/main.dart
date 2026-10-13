@@ -6,6 +6,7 @@ import 'package:flutter/services.dart' show rootBundle;
 
 import 'accordion_playground.dart';
 import 'alert_dialog_examples.dart';
+import 'badge_examples.dart';
 import 'browser.dart';
 import 'button_playground.dart';
 import 'catalog.dart';
@@ -216,6 +217,8 @@ class _DocsShellState extends State<DocsShell> {
                         const AccordionPlayground(),
                       if (page.path == '/components/alert-dialog')
                         const AlertDialogExamples(),
+                      if (page.path == '/components/badge')
+                        const BadgeExamples(),
                       if (page.path == '/components/button')
                         const ButtonPlayground(),
                       FoundationPreview(path: page.path),

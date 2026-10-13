@@ -9,6 +9,10 @@ Brian UI는 Flutter 기본 위젯 계층으로 만드는 독립 디자인 시스
 
 [문서 사이트](https://thebriancompany.github.io/brian-ui/)
 
+## 컴포넌트
+
+- [Badge 사용 가이드](https://github.com/thebriancompany/brian-ui/blob/develop/doc/components/badge/badge.md) — 상태·분류·부가 정보 라벨
+
 ## 디렉터리
 
 - [lib](https://github.com/thebriancompany/brian-ui/tree/develop/lib) — 디자인 토큰, 테마와 Flutter 컴포넌트

@@ -24,6 +24,9 @@ dartdoc:
     Accordion:
       markdown: doc/components/accordion/accordion.md
       displayName: 아코디언
+    Badge:
+      markdown: doc/components/badge/badge.md
+      displayName: 배지
     AlertDialog:
       markdown: doc/components/alert_dialog/alert_dialog.md
       displayName: 알림 다이얼로그
@@ -44,5 +47,6 @@ dartdoc:
     - Button
     - Accordion
     - AlertDialog
+    - Badge
     - ColorReference
     - Contrast

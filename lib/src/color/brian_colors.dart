@@ -149,6 +149,15 @@ class BrianColors {
         warningContrast: palette.yellow.step900,
       ),
       background: BrianBackgroundColors(
+        criticalSolidContrast: isDark
+            ? palette.red.step500
+            : palette.red.step800,
+        informativeSolidContrast: isDark
+            ? palette.blue.step500
+            : palette.blue.step800,
+        positiveSolidContrast: isDark
+            ? palette.green.step500
+            : palette.green.step800,
         brandSolid: isDark ? brand.step700 : brand.step800,
         brandSolidPressed: isDark ? brand.step800 : brand.step900,
         brandWeak: brand.step100,
