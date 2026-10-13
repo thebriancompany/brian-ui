@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import '../button/brian_button.dart';
+import '../button_group/brian_button_group.dart';
 import '../radius/brian_radius.dart';
 import '../spacing/brian_spacing.dart';
 import '../theme/brian_theme.dart';
@@ -247,62 +248,21 @@ class _AlertDialogFooter<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = DefaultTextStyle.of(context).style
-        .merge(BrianTheme.of(context).typography.t4Bold);
-    Widget button(
-      BrianAlertDialogAction<T> action, {
+    BrianButtonGroupAction action(
+      BrianAlertDialogAction<T> value, {
       required bool autofocus,
-    }) => BrianButton(
-      variant: action.variant,
+    }) => BrianButtonGroupAction(
+      label: value.label,
+      variant: value.variant,
       autofocus: autofocus,
-      onPressed: pending == null ? () => onSelected(action) : null,
-      isLoading: identical(pending, action),
-      child: Text(action.label),
+      onPressed: pending == null ? () => onSelected(value) : null,
+      isLoading: identical(pending, value),
     );
-    if (secondary == null) return button(primary, autofocus: true);
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // medium 버튼의 좌우 패딩을 제외한 실제 라벨 너비로 판정합니다.
-        final labelWidth = math.max(
-          0.0,
-          (constraints.maxWidth - BrianSpacing.x2) / 2 - BrianSpacing.x4 * 2,
-        );
-        bool wraps(String label) {
-          final painter = TextPainter(
-            text: TextSpan(text: label, style: style),
-            textDirection: Directionality.of(context),
-            textScaler: MediaQuery.textScalerOf(context),
-            locale: Localizations.maybeLocaleOf(context),
-            maxLines: 1,
-          )..layout(maxWidth: labelWidth);
-          final result =
-              painter.didExceedMaxLines || painter.width > labelWidth;
-          painter.dispose();
-          return result;
-        }
-
-        final vertical = wraps(secondary!.label) || wraps(primary.label);
-        final secondaryButton = button(secondary!, autofocus: true);
-        final primaryButton = button(primary, autofocus: false);
-        if (vertical) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              primaryButton,
-              const SizedBox(height: BrianSpacing.x2),
-              secondaryButton,
-            ],
-          );
-        }
-        return Row(
-          children: [
-            Expanded(child: secondaryButton),
-            const SizedBox(width: BrianSpacing.x2),
-            Expanded(child: primaryButton),
-          ],
-        );
-      },
+    return BrianButtonGroup(
+      primaryAction: action(primary, autofocus: secondary == null),
+      secondaryAction: secondary == null
+          ? null
+          : action(secondary!, autofocus: true),
     );
   }
 }

@@ -18,15 +18,21 @@ dartdoc:
     Theme:
       markdown: doc/theming/overview.md
       displayName: 테마
+    Button:
+      markdown: doc/components/button/button.md
+      displayName: 버튼
+    ButtonGroup:
+      markdown: doc/components/button_group/button_group.md
+      displayName: 버튼 그룹
     Accordion:
       markdown: doc/components/accordion/accordion.md
       displayName: 아코디언
     Badge:
       markdown: doc/components/badge/badge.md
       displayName: 배지
-    Button:
-      markdown: doc/components/button/button.md
-      displayName: 버튼
+    BottomSheet:
+      markdown: doc/components/bottom_sheet/bottom_sheet.md
+      displayName: 바텀 시트
     AlertDialog:
       markdown: doc/components/alert_dialog/alert_dialog.md
       displayName: 알림 다이얼로그
@@ -47,10 +53,12 @@ dartdoc:
     - Radius
     - Spacing
     - Theme
+    - Button
+    - ButtonGroup
     - Accordion
+    - BottomSheet
     - AlertDialog
     - Badge
-    - Button
     - Callout
     - ColorReference
     - Contrast
