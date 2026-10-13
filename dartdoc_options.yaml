@@ -21,6 +21,9 @@ dartdoc:
     Button:
       markdown: doc/components/button/button.md
       displayName: 버튼
+    ButtonGroup:
+      markdown: doc/components/button_group/button_group.md
+      displayName: 버튼 그룹
     Accordion:
       markdown: doc/components/accordion/accordion.md
       displayName: 아코디언
@@ -45,6 +48,7 @@ dartdoc:
     - Spacing
     - Theme
     - Button
+    - ButtonGroup
     - Accordion
     - AlertDialog
     - Badge
