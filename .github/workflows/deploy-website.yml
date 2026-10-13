@@ -1,0 +1,71 @@
+name: Website
+
+on:
+  pull_request:
+    branches: [develop]
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: website-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Validate and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.1'
+          cache: true
+      - name: Resolve Pages base path
+        id: base
+        env:
+          CUSTOM_BASE_PATH: ${{ vars.PAGES_BASE_PATH }}
+        shell: bash
+        run: |
+          repository_name="${GITHUB_REPOSITORY#*/}"
+          if [[ -n "$CUSTOM_BASE_PATH" ]]; then
+            base_href="$CUSTOM_BASE_PATH"
+          elif [[ "$repository_name" == *.github.io ]]; then
+            base_href=/
+          else
+            base_href="/$repository_name/"
+          fi
+          if [[ ! "$base_href" =~ ^/([A-Za-z0-9._-]+/)*$ ]]; then
+            echo 'Invalid PAGES_BASE_PATH' >&2
+            exit 1
+          fi
+          echo "href=$base_href" >> "$GITHUB_OUTPUT"
+      - name: Validate package, website and API docs
+        env:
+          BASE_HREF: ${{ steps.base.outputs.href }}
+        run: bash tool/build_website.sh "$BASE_HREF"
+      - name: Upload Pages artifact
+        if: github.ref == 'refs/heads/develop' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: website/build/web
+
+  deploy:
+    name: Deploy to GitHub Pages
+    if: github.ref == 'refs/heads/develop' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -4,6 +4,7 @@ Brian UI의 코드와 문서는 아래 기준으로 작성합니다.
 
 - [Dart/Flutter 컨벤션](doc/contributing/code_style.md): 공식 린트, 포맷, 설계 원칙.
 - [문서 작성법](doc/contributing/documentation.md): API 주석, 사용 가이드, dartdoc 연결.
+- [개발과 웹 배포](doc/contributing/website.md): 실제 예제, 문서 사이트 검증, Pages 자동 배포.
 - [주석 기준](doc/contributing/comments.md): 남길 정보와 생략할 설명의 구분.
 - [에이전트 작업 지침](AGENTS.md): 자동화된 작업에도 적용할 핵심 원칙.
 
@@ -21,3 +22,6 @@ Markdown 안의 Dart 예제가 자동 컴파일되는 것은 아니므로, 실�
 
 PR에는 변경한 동작과 이유, 실제 수행한 검증, 남아 있는 제한을 적습니다.
 불필요한 API 변경이나 작업 범위 밖 정리를 함께 넣지 않습니다.
+
+컴포넌트를 변경했다면 `website/`의 실제 예제와 가이드도 함께 확인합니다.
+웹사이트와 API 참조를 포함한 전체 검증은 `bash tool/build_website.sh`로 실행합니다.

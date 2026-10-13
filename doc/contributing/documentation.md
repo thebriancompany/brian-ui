@@ -109,7 +109,8 @@ python3 -m http.server 8080 --bind 127.0.0.1 --directory doc/api
 
 이후 브라우저에서 `http://localhost:8080`을 엽니다. 서버는 검토 후 종료합니다.
 향후 pub.dev에 배포하면 공개 API 문서가 자동으로 호스팅됩니다. 생성 HTML은
-GitHub Pages 같은 정적 호스팅에도 배포할 수 있습니다. 현재 배포 자동화는 없습니다.
+GitHub Pages 같은 정적 호스팅에도 배포할 수 있습니다. 현재는 `develop` 변경 시 웹 문서 사이트와 API 참조를 함께 배포합니다.
+설정과 검증 절차는 `doc/contributing/website.md`를 참고하세요.
 
 ## 공식 자료
 

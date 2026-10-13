@@ -77,6 +77,25 @@ class Greeting extends StatelessWidget {
 생성된 문서는 정적 웹 호스팅에 배포할 수 있습니다. 향후 pub.dev에 배포하면
 공개 API 문서도 자동으로 호스팅됩니다.
 
+## 웹 문서 사이트
+
+`website/`에서 실제 Brian UI 컴포넌트를 조작하고 기존 가이드를 읽을 수 있습니다.
+라이트·다크 전환, 기반 토큰 미리보기, 버튼 옵션과 코드 복사를 제공합니다.
+`develop`에 변경이 반영되면 GitHub Actions가 검증 후 GitHub Pages에 배포합니다.
+최초 Pages 설정, 개발·검증 순서와 배포 방식은 `doc/contributing/website.md`를 참고하세요.
+
+```sh
+flutter pub get
+dart run tool/sync_website_docs.dart
+cd website
+flutter pub get
+flutter run -d chrome
+```
+
+사이트는 사용 가이드와 실행 예제를, dartdoc은 공개 API의 정확한 계약을 담당합니다.
+배포 시 API 참조도 `api/`에 함께 제공하므로 둘을 유지합니다.
+전체 검증과 배포 빌드는 저장소 루트에서 `bash tool/build_website.sh`로 실행합니다.
+
 ## 개발
 
 기여 절차는 `CONTRIBUTING.md`, 에이전트 작업 기준은 `AGENTS.md`에 정리되어 있습니다.
@@ -92,5 +111,5 @@ flutter test
 dart doc --validate-links
 ```
 
-현재 `publish_to: none`이며 배포하지 않습니다.
+패키지는 현재 `publish_to: none`이며 pub.dev에 배포하지 않습니다. 웹 문서 사이트 배포와는 별개입니다.
 프로젝트 자체의 배포 라이선스는 아직 결정하지 않았습니다.
