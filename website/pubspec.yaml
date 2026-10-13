@@ -16,7 +16,6 @@ dependencies:
   web: ^1.1.1
   highlight: ^0.7.0
   markdown: ^7.3.1
-  cupertino_icons: ^2.0.0
 
 dev_dependencies:
   flutter_test:
