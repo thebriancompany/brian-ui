@@ -27,6 +27,9 @@ dartdoc:
     AlertDialog:
       markdown: doc/components/alert_dialog/alert_dialog.md
       displayName: 알림 다이얼로그
+    Callout:
+      markdown: doc/components/callout/callout.md
+      displayName: 콜아웃
     ColorReference:
       markdown: doc/foundations/color/color_reference.md
       displayName: 색상값
@@ -44,5 +47,6 @@ dartdoc:
     - Button
     - Accordion
     - AlertDialog
+    - Callout
     - ColorReference
     - Contrast
