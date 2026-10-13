@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../color/brian_static_colors.dart';
 import '../radius/brian_radius.dart';
 import '../spacing/brian_spacing.dart';
 import '../theme/brian_theme.dart';
@@ -25,6 +26,9 @@ enum BrianBadgeSize { medium, large }
 /// 상위에 BrianTheme이 필요합니다. 클릭·선택 동작을 제공하지 않습니다.
 /// 라벨은 한 줄로 표시하고 [maxWidth]를 넘으면 말줄임합니다.
 /// 접근성 트리에는 말줄임 전의 전체 [label]이 유지됩니다.
+/// 전경을 배경에 합성한 대비가 4.5:1 미만이면 검정·흰색 중 대비가 큰 색을
+/// 사용합니다. 투명 배경은 테마의 layerDefault 위에 합성해 계산하므로,
+/// 다른 표면 위에 배치할 때는 실제 배경과의 대비를 별도로 확인해야 합니다.
 ///
 /// {@category Badge}
 class BrianBadge extends StatelessWidget {
@@ -96,6 +100,15 @@ class BrianBadge extends StatelessWidget {
         stroke.criticalWeak,
       ),
     };
+    final background = switch (variant) {
+      BrianBadgeVariant.solid => solid,
+      BrianBadgeVariant.weak => weak,
+      BrianBadgeVariant.outline => bg.transparent,
+    };
+    final textColor = _contrastingForeground(
+      variant == BrianBadgeVariant.solid ? onSolid : foreground,
+      Color.alphaBlend(background, bg.layerDefault),
+    );
     final large = size == BrianBadgeSize.large;
     final style = large ? theme.typography.t3Bold : theme.typography.t2Bold;
     return Semantics(
@@ -106,11 +119,7 @@ class BrianBadge extends StatelessWidget {
         child: DecoratedBox(
           // 테두리가 패딩에 더해지지 않아 스타일을 바꿔도 크기가 같습니다.
           decoration: ShapeDecoration(
-            color: switch (variant) {
-              BrianBadgeVariant.solid => solid,
-              BrianBadgeVariant.weak => weak,
-              BrianBadgeVariant.outline => bg.transparent,
-            },
+            color: background,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(BrianRadius.r1),
               side: variant == BrianBadgeVariant.outline
@@ -128,17 +137,26 @@ class BrianBadge extends StatelessWidget {
               maxLines: 1,
               softWrap: false,
               overflow: TextOverflow.ellipsis,
-              style: DefaultTextStyle.of(context).style.merge(
-                style.copyWith(
-                  color: variant == BrianBadgeVariant.solid
-                      ? onSolid
-                      : foreground,
-                ),
-              ),
+              style: DefaultTextStyle.of(context).style
+                  .merge(style.copyWith(color: textColor)),
             ),
           ),
         ),
       ),
     );
   }
+}
+
+// 서로 반대인 전경 역할을 보간하면 중간에 배경과 같은 밝기를 지날 수 있습니다.
+Color _contrastingForeground(Color foreground, Color background) {
+  double contrast(Color color) {
+    final a = Color.alphaBlend(color, background).computeLuminance();
+    final b = background.computeLuminance();
+    return a > b ? (a + 0.05) / (b + 0.05) : (b + 0.05) / (a + 0.05);
+  }
+
+  if (contrast(foreground) >= 4.5) return foreground;
+  return contrast(BrianStaticColors.black) >= contrast(BrianStaticColors.white)
+      ? BrianStaticColors.black
+      : BrianStaticColors.white;
 }

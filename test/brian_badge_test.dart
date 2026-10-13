@@ -233,6 +233,79 @@ void main() {
     }
   });
 
+  testWidgets('모든 배지 색상과 스타일은 양방향 테마 전환에서 합성 대비를 유지한다', (tester) async {
+    for (final reverse in [false, true]) {
+      final start = reverse ? BrianThemeData.dark : BrianThemeData.light;
+      final end = reverse ? BrianThemeData.light : BrianThemeData.dark;
+      for (var step = 0; step <= 100; step++) {
+        final t = step / 100;
+        final theme = start.lerp(end, t);
+        for (final variant in BrianBadgeVariant.values) {
+          for (final tone in BrianBadgeTone.values) {
+            await tester.pumpWidget(
+              host(
+                BrianBadge(label: '상태', tone: tone, variant: variant),
+                theme: theme,
+              ),
+            );
+            final box = tester.widget<DecoratedBox>(
+              find.descendant(
+                of: find.byType(BrianBadge),
+                matching: find.byType(DecoratedBox),
+              ),
+            );
+            final fill = (box.decoration as ShapeDecoration).color!;
+            final background = Color.alphaBlend(
+              fill,
+              theme.colors.background.layerDefault,
+            );
+            final foreground = tester
+                .widget<Text>(find.text('상태'))
+                .style!
+                .color!;
+            final a = Color.alphaBlend(
+              foreground,
+              background,
+            ).computeLuminance();
+            final b = background.computeLuminance();
+            final ratio = a > b
+                ? (a + 0.05) / (b + 0.05)
+                : (b + 0.05) / (a + 0.05);
+            expect(
+              ratio,
+              greaterThanOrEqualTo(4.5),
+              reason: '$reverse / $t / $variant / $tone',
+            );
+          }
+        }
+      }
+    }
+  });
+
+  testWidgets('대비가 부족한 사용자 정의 전경도 합성 결과로 보정한다', (tester) async {
+    final theme = BrianThemeData.light;
+    const background = Color(0xFF808080);
+    await tester.pumpWidget(
+      host(
+        const BrianBadge(label: '상태'),
+        theme: theme.copyWith(
+          colors: theme.colors.copyWith(
+            background: theme.colors.background.copyWith(
+              neutralWeak: background,
+            ),
+            foreground: theme.colors.foreground.copyWith(
+              neutral: const Color(0x10000000),
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(
+      tester.widget<Text>(find.text('상태')).style!.color,
+      BrianStaticColors.black,
+    );
+  });
+
   test('대비 배경 역할은 복사·동등성·테마 보간에 참여한다', () {
     final original = BrianThemeData.light;
     final bg = original.colors.background;
