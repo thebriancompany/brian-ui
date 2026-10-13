@@ -35,5 +35,7 @@ fi
 
 rm -rf website/build/web/api
 cp -R doc/api website/build/web/api
+mkdir -p website/build/web/api/doc
+cp -R doc/assets website/build/web/api/doc/assets
 touch website/build/web/.nojekyll
 echo "배포 산출물: website/build/web (base href: $base_href)"
