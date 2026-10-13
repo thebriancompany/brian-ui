@@ -18,6 +18,9 @@ dartdoc:
     Theme:
       markdown: doc/theming/overview.md
       displayName: 테마
+    Button:
+      markdown: doc/components/button/button.md
+      displayName: 버튼
     ColorReference:
       markdown: doc/foundations/color/color_reference.md
       displayName: 색상값
@@ -32,5 +35,6 @@ dartdoc:
     - Radius
     - Spacing
     - Theme
+    - Button
     - ColorReference
     - Contrast

@@ -1,4 +1,4 @@
-/// Brian UI의 독립적인 색상·타이포그래피·그림자·모서리·간격·테마 시스템입니다.
+/// Brian UI의 독립적인 색상·타이포그래피·그림자·모서리·간격·테마와 버튼을 제공합니다.
 ///
 /// [BrianTheme]으로 테마를 제공하고 `BrianTheme.of(context).colors`로
 /// 역할 색상을 읽습니다. 일반 콘텐츠는 팔레트 값보다 역할 색상을 우선합니다.
@@ -9,6 +9,7 @@
 /// {@category Contrast}
 library;
 
+export 'src/button/brian_button.dart';
 export 'src/color/brian_banner_colors.dart';
 export 'src/color/brian_background_colors.dart';
 export 'src/color/brian_color_scale.dart';

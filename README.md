@@ -1,7 +1,7 @@
 # brian-ui
 
 Flutter 기본 위젯 계층으로 구성하는 독립 디자인 시스템입니다.
-패키지 이름은 `brian_ui`이며, 현재는 색상·타이포그래피·그림자·모서리·간격·테마를 제공합니다.
+패키지 이름은 `brian_ui`이며, 색상·타이포그래피·그림자·모서리·간격·테마와 버튼을 제공합니다.
 
 - 라이트·다크 팔레트와 고정 흰색·검은색/알파 값
 - 전경·배경·테두리의 역할 색상, 상호작용 상태와 배너 배경
@@ -9,6 +9,7 @@ Flutter 기본 위젯 계층으로 구성하는 독립 디자인 시스템입니
 - 세 단계의 그림자 토큰과 표면색·경계색을 조합하는 고도 가이드
 - 논리 픽셀 단위의 모서리 반지름과 간격 기본 스케일
 - `BrianTheme`을 통한 테마 전달과 지역 테마 재정의
+- 7가지 variant와 4가지 size, 로딩·키보드 입력을 지원하는 `BrianButton`
 - 한국어 API 주석, 색상 선택 가이드와 대비 측정표
 
 ## 사용하기
@@ -56,7 +57,7 @@ class Greeting extends StatelessWidget {
 `BrianTheme`은 색상·타이포그래피·그림자 데이터를 공급합니다. 시스템 모드 감지는 위 예제처럼
 앱에서 연결하며, 모드 변경 시 구독하는 위젯을 다시 빌드합니다.
 `BrianRadius`와 `BrianSpacing`은 테마 없이 사용하는 고정 기본 스케일입니다.
-독립 컴포넌트와 갤러리 앱은 이후에 추가합니다.
+`BrianButton`은 이 기반 값을 조합하며 Material·Cupertino에 의존하지 않습니다.
 
 ## 문서
 
@@ -65,13 +66,14 @@ class Greeting extends StatelessWidget {
 - 고도와 그림자 선택: `doc/foundations/elevation/elevation.md`
 - 모서리 반지름과 원형·캡슐 표현: `doc/foundations/radius/radius.md`
 - 간격 선택과 안전 영역: `doc/foundations/spacing/spacing.md`
+- 버튼 사용과 상호작용: `doc/components/button/button.md`
 - 테마 연결과 사용자 정의: `doc/theming/overview.md`
 - 전체 색상값: `doc/foundations/color/color_reference.md`
 - 전경·배경 대비 측정: `doc/foundations/color/color_contrast.md`
 
 `///` 주석은 IDE 도움말과 API 문서의 원본입니다.
 `dart doc`으로 `doc/api/`에 HTML을 생성할 수 있으며, `dartdoc_options.yaml`의
-색상·타이포그래피·고도·모서리·간격·테마·색상값·대비 분류에서 가이드도 함께 읽을 수 있습니다.
+색상·타이포그래피·고도·모서리·간격·테마·버튼·색상값·대비 분류에서 가이드도 함께 읽을 수 있습니다.
 생성된 문서는 정적 웹 호스팅에 배포할 수 있습니다. 향후 pub.dev에 배포하면
 공개 API 문서도 자동으로 호스팅됩니다.
 

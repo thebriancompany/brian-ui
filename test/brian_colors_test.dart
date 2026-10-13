@@ -176,13 +176,17 @@ void main() {
       }
     });
 
-    test('${colors.brightness.name}: 기본 브랜드 대비 제한과 대체 조합을 기록한다', () {
+    test('${colors.brightness.name}: 흰색 브랜드 전경의 대비 제한과 대안을 기록한다', () {
       final bg = colors.background;
+      expect(colors.foreground.onBrandSolid, BrianStaticColors.white);
       expect(
         _contrast(colors.foreground.onBrandSolid, bg.brandSolid),
         closeTo(2.94, 0.01),
       );
-      // 기본 흰색 글자를 작은 버튼에 무심코 적용하지 않도록 제한을 명시한다.
+      expect(
+        _contrast(colors.foreground.onBrandSolid, bg.brandSolidPressed),
+        closeTo(colors.brightness == Brightness.light ? 3.99 : 2.03, 0.01),
+      );
       expect(
         _contrast(BrianStaticColors.black, bg.brandSolid),
         greaterThanOrEqualTo(4.5),
