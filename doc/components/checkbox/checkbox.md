@@ -54,6 +54,7 @@ BrianCheckbox(
 중립 역할 색상을 사용하며 선택된 상자는 `background.neutralSolid`와
 `foreground.onNeutralSolid`, 눌림은 `background.neutralSolidPressed`를 사용합니다.
 비활성 상태는 `background.disabled`와 `foreground.disabled`를 사용합니다.
+비활성 ghost의 미선택 표시는 선택 표시의 50% 불투명도로 구분합니다.
 라이트·다크와 사용자 정의 테마의 역할 토큰을 따릅니다. 사용자 정의 색상에서는
 표시와 주변 표면의 대비를 다시 확인해야 합니다.
 

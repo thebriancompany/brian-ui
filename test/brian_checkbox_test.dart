@@ -1,7 +1,7 @@
-import 'dart:ui' show CheckedState, Tristate;
+import 'dart:ui' show CheckedState, ImageByteFormat, Tristate;
 
 import 'package:brian_ui/brian_ui.dart';
-import 'package:flutter/semantics.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -210,6 +210,55 @@ void main() {
             );
           }
         }
+      }
+    }
+  });
+
+  testWidgets('비활성 ghost의 선택·미선택·부분 선택을 두 테마에서 구분한다', (tester) async {
+    for (final theme in [BrianThemeData.light, BrianThemeData.dark]) {
+      for (final size in BrianCheckboxSize.values) {
+        final boundaryKey = GlobalKey();
+        Future<List<int>> pixels(bool? value) async {
+          await tester.pumpWidget(
+            host(
+              RepaintBoundary(
+                key: boundaryKey,
+                child: ColoredBox(
+                  color: theme.colors.background.layerDefault,
+                  child: BrianCheckmark(
+                    value: value,
+                    enabled: false,
+                    shape: BrianCheckboxShape.ghost,
+                    size: size,
+                  ),
+                ),
+              ),
+              theme: theme,
+            ),
+          );
+          await tester.pumpAndSettle();
+          final boundary = tester.renderObject<RenderRepaintBoundary>(
+            find.byKey(boundaryKey),
+          );
+          return (await tester.runAsync(() async {
+            final image = await boundary.toImage();
+            try {
+              final data = (await image.toByteData(
+                format: ImageByteFormat.rawRgba,
+              ))!;
+              return data.buffer.asUint8List().toList();
+            } finally {
+              image.dispose();
+            }
+          }))!;
+        }
+
+        final unchecked = await pixels(false);
+        final checked = await pixels(true);
+        final mixed = await pixels(null);
+        expect(unchecked, isNot(orderedEquals(checked)));
+        expect(mixed, isNot(orderedEquals(checked)));
+        expect(mixed, isNot(orderedEquals(unchecked)));
       }
     }
   });

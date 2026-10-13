@@ -222,7 +222,11 @@ class BrianCheckmark extends StatelessWidget {
         ? colors.background.neutralSolidPressed
         : colors.background.neutralSolid;
     final mark = !enabled
-        ? colors.foreground.disabled
+        ? colors.foreground.disabled.withValues(
+            // 비활성 ghost에서도 미선택 표시를 선택 표시보다 옅게 유지합니다.
+            alpha:
+                colors.foreground.disabled.a * (!square && !selected ? .5 : 1),
+          )
         : square && selected
         ? colors.foreground.onNeutralSolid
         : selected
