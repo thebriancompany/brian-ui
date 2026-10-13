@@ -39,6 +39,9 @@ dartdoc:
     Callout:
       markdown: doc/components/callout/callout.md
       displayName: 콜아웃
+    Chip:
+      markdown: doc/components/chip/chip.md
+      displayName: 칩
     Divider:
       markdown: doc/components/divider/divider.md
       displayName: 구분선
@@ -66,6 +69,7 @@ dartdoc:
     - AlertDialog
     - Badge
     - Callout
+    - Chip
     - Divider
     - ScrollFog
     - ColorReference
