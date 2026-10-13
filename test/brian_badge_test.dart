@@ -61,8 +61,6 @@ void main() {
   testWidgets('라이트·다크의 모든 의미 색상과 스타일이 테마를 따른다', (tester) async {
     for (final theme in [BrianThemeData.light, BrianThemeData.dark]) {
       final bg = theme.colors.background;
-      final palette = theme.colors.palette;
-      final dark = theme.brightness == Brightness.dark;
       final fg = theme.colors.foreground;
       final stroke = theme.colors.stroke;
       final expected = [
@@ -81,14 +79,14 @@ void main() {
           stroke.brandWeak,
         ),
         (
-          dark ? palette.blue.step500 : palette.blue.step800,
+          bg.informativeSolidContrast,
           bg.informativeWeak,
           fg.onInformativeSolid,
           fg.informativeContrast,
           stroke.informativeWeak,
         ),
         (
-          dark ? palette.green.step500 : palette.green.step800,
+          bg.positiveSolidContrast,
           bg.positiveWeak,
           fg.onPositiveSolid,
           fg.positiveContrast,
@@ -102,7 +100,7 @@ void main() {
           stroke.warningWeak,
         ),
         (
-          dark ? palette.red.step500 : palette.red.step800,
+          bg.criticalSolidContrast,
           bg.criticalWeak,
           fg.onCriticalSolid,
           fg.criticalContrast,
@@ -178,6 +176,91 @@ void main() {
         );
       }
     }
+  });
+
+  testWidgets('상태 배지는 테마 전환 중에도 끝점 배경을 보간하고 대비를 유지한다', (tester) async {
+    final light = BrianThemeData.light;
+    final dark = BrianThemeData.dark;
+    for (final tone in [
+      BrianBadgeTone.informative,
+      BrianBadgeTone.positive,
+      BrianBadgeTone.critical,
+    ]) {
+      Color backgroundOf(BrianThemeData theme) => switch (tone) {
+        BrianBadgeTone.informative =>
+          theme.colors.background.informativeSolidContrast,
+        BrianBadgeTone.positive =>
+          theme.colors.background.positiveSolidContrast,
+        _ => theme.colors.background.criticalSolidContrast,
+      };
+      for (final t in [0.0, 0.25, 0.49, 0.5, 0.51, 0.75, 1.0]) {
+        final theme = light.lerp(dark, t);
+        await tester.pumpWidget(
+          host(
+            BrianBadge(
+              label: '상태',
+              tone: tone,
+              variant: BrianBadgeVariant.solid,
+            ),
+            theme: theme,
+          ),
+        );
+        final box = tester.widget<DecoratedBox>(
+          find.descendant(
+            of: find.byType(BrianBadge),
+            matching: find.byType(DecoratedBox),
+          ),
+        );
+        final background = (box.decoration as ShapeDecoration).color!;
+        expect(
+          background,
+          Color.lerp(backgroundOf(light), backgroundOf(dark), t),
+        );
+        final foreground = tester.widget<Text>(find.text('상태')).style!.color!;
+        final luminance = Color.alphaBlend(
+          foreground,
+          background,
+        ).computeLuminance();
+        expect(
+          (luminance + 0.05) / (background.computeLuminance() + 0.05),
+          greaterThanOrEqualTo(4.5),
+          reason: '$tone / $t',
+        );
+      }
+    }
+  });
+
+  test('대비 배경 역할은 복사·동등성·테마 보간에 참여한다', () {
+    final original = BrianThemeData.light;
+    final bg = original.colors.background;
+    final changed = bg.copyWith(
+      informativeSolidContrast: const Color(0xFF123456),
+      positiveSolidContrast: const Color(0xFF234567),
+      criticalSolidContrast: const Color(0xFF345678),
+    );
+    expect(changed, isNot(bg));
+    expect(changed.copyWith(), changed);
+    expect(changed.copyWith().hashCode, changed.hashCode);
+    final target = original.copyWith(
+      colors: original.colors.copyWith(background: changed),
+    );
+    final middle = original.lerp(target, 0.5).colors.background;
+    expect(
+      middle.informativeSolidContrast,
+      Color.lerp(
+        bg.informativeSolidContrast,
+        changed.informativeSolidContrast,
+        0.5,
+      ),
+    );
+    expect(
+      middle.positiveSolidContrast,
+      Color.lerp(bg.positiveSolidContrast, changed.positiveSolidContrast, 0.5),
+    );
+    expect(
+      middle.criticalSolidContrast,
+      Color.lerp(bg.criticalSolidContrast, changed.criticalSolidContrast, 0.5),
+    );
   });
 
   testWidgets('사용자 정의 테마와 부모 너비 제약을 따른다', (tester) async {

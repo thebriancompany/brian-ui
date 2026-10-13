@@ -41,7 +41,9 @@ large는 13픽셀 글자와 24픽셀 높이를 사용합니다.
 
 배경·전경·테두리는 `BrianTheme`의 색상을 사용합니다.
 작은 글자의 대비를 위해 informative·positive·critical의 solid 배경은
-해당 파랑·초록·빨강 팔레트의 라이트 step800, 다크 step500을 사용합니다.
+`background.informativeSolidContrast`·`positiveSolidContrast`·`criticalSolidContrast`를 사용합니다.
+이 역할은 해당 팔레트의 라이트 step800, 다크 step500에서 만들어지며,
+테마 전환 중에는 두 역할의 끝점 색상을 연속적으로 보간합니다.
 다른 solid 배경과 전경·테두리는 기존 역할 색상을 사용합니다.
 기본 테마의 모든 solid 조합은 일반 텍스트 대비 4.5:1 이상인지 테스트합니다.
 이는 사용자 정의 팔레트·전경이나 완성된 화면의 접근성을 보장하지 않습니다.

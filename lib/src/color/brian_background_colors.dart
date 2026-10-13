@@ -16,11 +16,13 @@ class BrianBackgroundColors {
     required this.brandWeak,
     required this.brandWeakPressed,
     required this.criticalSolid,
+    required this.criticalSolidContrast,
     required this.criticalSolidPressed,
     required this.criticalWeak,
     required this.criticalWeakPressed,
     required this.disabled,
     required this.informativeSolid,
+    required this.informativeSolidContrast,
     required this.informativeSolidPressed,
     required this.informativeWeak,
     required this.informativeWeakPressed,
@@ -40,6 +42,7 @@ class BrianBackgroundColors {
     required this.overlay,
     required this.overlayMuted,
     required this.positiveSolid,
+    required this.positiveSolidContrast,
     required this.positiveSolidPressed,
     required this.positiveWeak,
     required this.positiveWeakPressed,
@@ -63,6 +66,10 @@ class BrianBackgroundColors {
 
   final Color criticalSolid;
 
+  /// 작은 텍스트용 배경이며 `foreground.onCriticalSolid`와 조합합니다.
+  /// 기본 팔레트는 라이트 step800, 다크 step500에 연결하고 역할 값끼리 보간합니다.
+  final Color criticalSolidContrast;
+
   final Color criticalSolidPressed;
 
   final Color criticalWeak;
@@ -73,6 +80,10 @@ class BrianBackgroundColors {
   final Color disabled;
 
   final Color informativeSolid;
+
+  /// 작은 텍스트용 배경이며 `foreground.onInformativeSolid`와 조합합니다.
+  /// 기본 팔레트는 라이트 step800, 다크 step500에 연결하고 역할 값끼리 보간합니다.
+  final Color informativeSolidContrast;
 
   final Color informativeSolidPressed;
 
@@ -120,6 +131,10 @@ class BrianBackgroundColors {
 
   final Color positiveSolid;
 
+  /// 작은 텍스트용 배경이며 `foreground.onPositiveSolid`와 조합합니다.
+  /// 기본 팔레트는 라이트 step800, 다크 step500에 연결하고 역할 값끼리 보간합니다.
+  final Color positiveSolidContrast;
+
   final Color positiveSolidPressed;
 
   final Color positiveWeak;
@@ -150,11 +165,13 @@ class BrianBackgroundColors {
     Color? brandWeak,
     Color? brandWeakPressed,
     Color? criticalSolid,
+    Color? criticalSolidContrast,
     Color? criticalSolidPressed,
     Color? criticalWeak,
     Color? criticalWeakPressed,
     Color? disabled,
     Color? informativeSolid,
+    Color? informativeSolidContrast,
     Color? informativeSolidPressed,
     Color? informativeWeak,
     Color? informativeWeakPressed,
@@ -174,6 +191,7 @@ class BrianBackgroundColors {
     Color? overlay,
     Color? overlayMuted,
     Color? positiveSolid,
+    Color? positiveSolidContrast,
     Color? positiveSolidPressed,
     Color? positiveWeak,
     Color? positiveWeakPressed,
@@ -191,11 +209,14 @@ class BrianBackgroundColors {
     brandWeak: brandWeak ?? this.brandWeak,
     brandWeakPressed: brandWeakPressed ?? this.brandWeakPressed,
     criticalSolid: criticalSolid ?? this.criticalSolid,
+    criticalSolidContrast: criticalSolidContrast ?? this.criticalSolidContrast,
     criticalSolidPressed: criticalSolidPressed ?? this.criticalSolidPressed,
     criticalWeak: criticalWeak ?? this.criticalWeak,
     criticalWeakPressed: criticalWeakPressed ?? this.criticalWeakPressed,
     disabled: disabled ?? this.disabled,
     informativeSolid: informativeSolid ?? this.informativeSolid,
+    informativeSolidContrast:
+        informativeSolidContrast ?? this.informativeSolidContrast,
     informativeSolidPressed:
         informativeSolidPressed ?? this.informativeSolidPressed,
     informativeWeak: informativeWeak ?? this.informativeWeak,
@@ -218,6 +239,7 @@ class BrianBackgroundColors {
     overlay: overlay ?? this.overlay,
     overlayMuted: overlayMuted ?? this.overlayMuted,
     positiveSolid: positiveSolid ?? this.positiveSolid,
+    positiveSolidContrast: positiveSolidContrast ?? this.positiveSolidContrast,
     positiveSolidPressed: positiveSolidPressed ?? this.positiveSolidPressed,
     positiveWeak: positiveWeak ?? this.positiveWeak,
     positiveWeakPressed: positiveWeakPressed ?? this.positiveWeakPressed,
@@ -237,6 +259,21 @@ class BrianBackgroundColors {
     if (t == 0) return this;
     if (t == 1) return other;
     return BrianBackgroundColors(
+      positiveSolidContrast: Color.lerp(
+        positiveSolidContrast,
+        other.positiveSolidContrast,
+        t,
+      )!,
+      informativeSolidContrast: Color.lerp(
+        informativeSolidContrast,
+        other.informativeSolidContrast,
+        t,
+      )!,
+      criticalSolidContrast: Color.lerp(
+        criticalSolidContrast,
+        other.criticalSolidContrast,
+        t,
+      )!,
       brandSolid: Color.lerp(brandSolid, other.brandSolid, t)!,
       brandSolidPressed: Color.lerp(
         brandSolidPressed,
@@ -369,11 +406,13 @@ class BrianBackgroundColors {
           brandWeak == other.brandWeak &&
           brandWeakPressed == other.brandWeakPressed &&
           criticalSolid == other.criticalSolid &&
+          criticalSolidContrast == other.criticalSolidContrast &&
           criticalSolidPressed == other.criticalSolidPressed &&
           criticalWeak == other.criticalWeak &&
           criticalWeakPressed == other.criticalWeakPressed &&
           disabled == other.disabled &&
           informativeSolid == other.informativeSolid &&
+          informativeSolidContrast == other.informativeSolidContrast &&
           informativeSolidPressed == other.informativeSolidPressed &&
           informativeWeak == other.informativeWeak &&
           informativeWeakPressed == other.informativeWeakPressed &&
@@ -393,6 +432,7 @@ class BrianBackgroundColors {
           overlay == other.overlay &&
           overlayMuted == other.overlayMuted &&
           positiveSolid == other.positiveSolid &&
+          positiveSolidContrast == other.positiveSolidContrast &&
           positiveSolidPressed == other.positiveSolidPressed &&
           positiveWeak == other.positiveWeak &&
           positiveWeakPressed == other.positiveWeakPressed &&
@@ -412,11 +452,13 @@ class BrianBackgroundColors {
     brandWeak,
     brandWeakPressed,
     criticalSolid,
+    criticalSolidContrast,
     criticalSolidPressed,
     criticalWeak,
     criticalWeakPressed,
     disabled,
     informativeSolid,
+    informativeSolidContrast,
     informativeSolidPressed,
     informativeWeak,
     informativeWeakPressed,
@@ -436,6 +478,7 @@ class BrianBackgroundColors {
     overlay,
     overlayMuted,
     positiveSolid,
+    positiveSolidContrast,
     positiveSolidPressed,
     positiveWeak,
     positiveWeakPressed,

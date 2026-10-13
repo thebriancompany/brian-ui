@@ -32,11 +32,13 @@
 | `background.brandWeak` | `#eff6ff` | `#202742` |
 | `background.brandWeakPressed` | `#e2edfc` | `#1e3352` |
 | `background.criticalSolid` | `#fa342c` | `#f73526` |
+| `background.criticalSolidContrast` | `#ca1d13` | `#ca2319` |
 | `background.criticalSolidPressed` | `#ca1d13` | `#ff6e60` |
 | `background.criticalWeak` | `#fdf0f0` | `#322323` |
 | `background.criticalWeakPressed` | `#fde7e7` | `#4f2624` |
 | `background.disabled` | `#f3f4f5` | `#2b2e35` |
 | `background.informativeSolid` | `#217cf9` | `#1e82eb` |
+| `background.informativeSolidContrast` | `#135fcd` | `#1964d8` |
 | `background.informativeSolidPressed` | `#135fcd` | `#41a2f9` |
 | `background.informativeWeak` | `#eff6ff` | `#202742` |
 | `background.informativeWeakPressed` | `#e2edfc` | `#1e3352` |
@@ -56,6 +58,7 @@
 | `background.overlay` | `#00000074` | `#00000074` |
 | `background.overlayMuted` | `#0000002c` | `#0000002c` |
 | `background.positiveSolid` | `#079171` | `#117956` |
+| `background.positiveSolidContrast` | `#00745f` | `#117956` |
 | `background.positiveSolidPressed` | `#00745f` | `#1b946d` |
 | `background.positiveWeak` | `#edfaf6` | `#202926` |
 | `background.positiveWeakPressed` | `#d9f6e9` | `#20362e` |
