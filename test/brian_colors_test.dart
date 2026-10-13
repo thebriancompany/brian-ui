@@ -48,21 +48,38 @@ void main() {
     expect(BrianColors.dark.background.transparent.a, 0);
   });
 
-  test('팔레트 재연결은 브랜드의 전경·배경·눌림·테두리를 함께 바꾼다', () {
-    final palette = BrianPalette.light.copyWith(
-      orange: BrianPalette.light.purple,
-    );
-    final colors = BrianColors.fromPalette(
-      palette: palette,
-      brightness: Brightness.light,
-    );
-    expect(colors.foreground.brand, const Color(0xFF9F84FB));
-    expect(colors.background.brandSolid, const Color(0xFF9F84FB));
-    expect(colors.background.brandSolidPressed, const Color(0xFF8969EA));
-    expect(colors.stroke.brandSolid, const Color(0xFF8969EA));
-    expect(colors.foreground.neutral, BrianColors.light.foreground.neutral);
-    expect(BrianColors.light.foreground.brand, const Color(0xFFFF6600));
-  });
+  for (final base in [BrianColors.light, BrianColors.dark]) {
+    test('${base.brightness.name}: 브랜드 교체는 일반 색상 팔레트를 보존한다', () {
+      final palette = base.palette;
+      final brand = palette.purple;
+      final isDark = base.brightness == Brightness.dark;
+      final colors = BrianColors.fromPalette(
+        palette: palette,
+        brightness: base.brightness,
+        brandScale: brand,
+      );
+      expect(colors.palette, same(palette));
+      expect(colors.palette.orange, base.palette.orange);
+      expect(colors.foreground.brand, isDark ? brand.step700 : brand.step600);
+      expect(colors.foreground.brandContrast, brand.step700);
+      expect(colors.foreground.onBrandSolid, base.foreground.onBrandSolid);
+      expect(colors.background.brandSolid, colors.foreground.brand);
+      expect(
+        colors.background.brandSolidPressed,
+        isDark ? brand.step800 : brand.step700,
+      );
+      expect(colors.background.brandWeak, brand.step100);
+      expect(colors.background.brandWeakPressed, brand.step200);
+      expect(colors.stroke.brandSolid, brand.step700);
+      expect(colors.stroke.brandWeak, brand.step300);
+      expect(colors.foreground.neutral, base.foreground.neutral);
+      expect(
+        colors.background.informativeSolid,
+        base.background.informativeSolid,
+      );
+      expect(colors.stroke.focusRing, base.stroke.focusRing);
+    });
+  }
 
   test('같은 값을 갖는 서로 다른 역할은 독립적으로 교체된다', () {
     final base = BrianColors.light;
@@ -118,6 +135,23 @@ void main() {
   });
 
   for (final colors in [BrianColors.light, BrianColors.dark]) {
+    test('${colors.brightness.name}: 포커스 링은 기본 표면에서 3:1 이상이다', () {
+      final bg = colors.background;
+      for (final surface in [
+        bg.layerDefault,
+        bg.layerBasement,
+        bg.layerFloating,
+        bg.layerDefaultPressed,
+        bg.layerFloatingPressed,
+      ]) {
+        expect(
+          _contrast(colors.stroke.focusRing, surface),
+          greaterThanOrEqualTo(3),
+          reason: '${colors.stroke.focusRing} / $surface',
+        );
+      }
+    });
+
     test('${colors.brightness.name}: 권장 본문과 안내 조합은 4.5:1 이상이다', () {
       final fg = colors.foreground;
       final bg = colors.background;

@@ -71,7 +71,7 @@
 | `stroke.brandWeak` | `#ffd5c0` | `#6b311c` |
 | `stroke.criticalSolid` | `#fa342c` | `#ff6e60` |
 | `stroke.criticalWeak` | `#fed4d2` | `#742826` |
-| `stroke.focusRing` | `#5e98fe` | `#1e82eb` |
+| `stroke.focusRing` | `#217cf9` | `#1e82eb` |
 | `stroke.informativeSolid` | `#217cf9` | `#41a2f9` |
 | `stroke.informativeWeak` | `#cbdffa` | `#1a4275` |
 | `stroke.neutralContrast` | `#1a1c20` | `#f3f4f5` |

@@ -20,3 +20,14 @@ APCA 점수가 아니며, 모든 토큰 조합이나 완성된 UI의 접근성�
 | `onWarningSolid` / `warningSolid` | 10.80:1 | 7.93:1 | 충족 / 충족 |
 | `warningContrast` / `warningWeak` | 9.61:1 | 9.85:1 | 충족 / 충족 |
 | `onNeutralSolid` / `neutralSolid` | 13.31:1 | 16.26:1 | 충족 / 충족 |
+
+## 포커스 링과 표면
+
+| 윤곽선 / 배경 | 라이트 | 다크 | 3:1 (라이트 / 다크) |
+| --- | ---: | ---: | --- |
+| `stroke.focusRing` / `layerDefault` | 3.95:1 | 4.65:1 | 충족 / 충족 |
+| `stroke.focusRing` / `layerBasement` | 3.59:1 | 5.45:1 | 충족 / 충족 |
+| `stroke.focusRing` / `layerFloating` | 3.95:1 | 4.24:1 | 충족 / 충족 |
+
+기본·떠 있는 표면의 눌림 상태도 두 모드에서 3:1 이상인지 테스트합니다.
+다른 인접 색상이나 사용자 정의 테마, 포커스 표시의 면적·두께는 별도 검증 대상입니다.

@@ -53,16 +53,15 @@ final custom = base.copyWith(
 );
 ```
 
-전체 브랜드 계열을 교체하려면 새 팔레트에 역할을 다시 연결할 수 있습니다.
+전체 브랜드 계열은 `brandScale`로 교체하며, 일반 색상명 팔레트는 보존합니다.
 아래 예제의 보라색도 새로운 배경·전경 조합이므로 대비 검증은 별도로 필요합니다.
 
 ```dart
-final palette = BrianPalette.light.copyWith(
-  orange: BrianPalette.light.purple,
-);
+final palette = BrianPalette.light;
 final colors = BrianColors.fromPalette(
   palette: palette,
   brightness: Brightness.light,
+  brandScale: palette.purple,
 );
 final theme = BrianThemeData(colors: colors);
 ```
