@@ -57,6 +57,37 @@ void main() {
     expect(example.code, source);
   });
 
+  testWidgets('아코디언 옵션과 코드 및 실제 펼침이 일치한다', (tester) async {
+    await openPage(tester, '/components/accordion');
+    await tapButton(tester, 'separated');
+    await tapButton(tester, 'large');
+    await tapButton(tester, 'multiple');
+    await tapButton(tester, '+ / −');
+    await tester.pumpAndSettle();
+    final accordion = tester.widget<BrianAccordion>(
+      find.byType(BrianAccordion),
+    );
+    expect(accordion.variant, BrianAccordionVariant.separated);
+    expect(accordion.size, BrianAccordionSize.large);
+    expect(accordion.expansionMode, BrianAccordionExpansionMode.multiple);
+    expect(accordion.children.first.indicatorBuilder, isNotNull);
+    final code = tester
+        .widget<CodeExample>(find.byType(CodeExample).first)
+        .code;
+    expect(code, contains('BrianAccordionVariant.separated'));
+    expect(code, contains('BrianAccordionSize.large'));
+    expect(code, contains('BrianAccordionExpansionMode.multiple'));
+    expect(code, contains('indicatorBuilder:'));
+    final title = find.text('배송 안내').first;
+    await tester.ensureVisible(title);
+    await tester.pumpAndSettle();
+    await tester.tap(title);
+    await tester.pumpAndSettle();
+    expect(find.text('배송에는 2~3일이 걸립니다.'), findsOneWidget);
+    expect(find.text('−'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('버튼 상태와 복사 코드가 실제 BrianButton에 함께 반영된다', (tester) async {
     await openPage(tester, '/components/button');
     final preview = find.byKey(const ValueKey('button-preview'));
