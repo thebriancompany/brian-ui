@@ -164,7 +164,10 @@ void main() {
         );
         final background = (box.decoration as ShapeDecoration).color!;
         final foreground = tester.widget<Text>(find.text('상태')).style!.color!;
-        final first = foreground.computeLuminance();
+        final first = Color.alphaBlend(
+          foreground,
+          background,
+        ).computeLuminance();
         final second = background.computeLuminance();
         final ratio = first > second
             ? (first + 0.05) / (second + 0.05)
