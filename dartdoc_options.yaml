@@ -21,6 +21,9 @@ dartdoc:
     Button:
       markdown: doc/components/button/button.md
       displayName: 버튼
+    Accordion:
+      markdown: doc/components/accordion/accordion.md
+      displayName: 아코디언
     ColorReference:
       markdown: doc/foundations/color/color_reference.md
       displayName: 색상값
@@ -36,5 +39,6 @@ dartdoc:
     - Spacing
     - Theme
     - Button
+    - Accordion
     - ColorReference
     - Contrast
