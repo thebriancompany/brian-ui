@@ -7,7 +7,7 @@ import '../color/brian_colors.dart';
 import '../radius/brian_radius.dart';
 import '../spacing/brian_spacing.dart';
 import '../theme/brian_theme.dart';
-import '../typography/brian_typography.dart';
+import 'button_metrics.dart';
 
 /// 액션의 강조도와 의미에 따라 선택하는 버튼 표현입니다.
 ///
@@ -120,7 +120,7 @@ class _BrianButtonState extends State<BrianButton> {
   Widget build(BuildContext context) {
     final theme = BrianTheme.of(context);
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
-    final metrics = _ButtonMetrics(widget.size, theme.typography);
+    final metrics = ButtonMetrics(widget.size, theme.typography);
     final colors = _ButtonColors.resolve(
       theme.colors,
       widget.variant,
@@ -221,7 +221,10 @@ class _BrianButtonState extends State<BrianButton> {
                     : const Duration(milliseconds: 150),
                 curve: Curves.easeOutCubic,
                 builder: (context, colors, _) {
-                  final border = BorderSide(color: colors.border, width: 1);
+                  final border = BorderSide(
+                    color: colors.border,
+                    width: metrics.borderWidth,
+                  );
                   final OutlinedBorder shape =
                       widget.size == BrianButtonSize.xsmall
                       ? StadiumBorder(side: border)
@@ -307,50 +310,6 @@ class _BrianButtonState extends State<BrianButton> {
       ),
     );
   }
-}
-
-class _ButtonMetrics {
-  _ButtonMetrics(this.size, this.typography);
-  final BrianButtonSize size;
-  final BrianTypography typography;
-
-  double get height => switch (size) {
-    BrianButtonSize.xsmall => BrianSpacing.x8,
-    BrianButtonSize.small => BrianSpacing.x9,
-    BrianButtonSize.medium => BrianSpacing.x10,
-    BrianButtonSize.large => BrianSpacing.x13,
-  };
-  double get paddingX => switch (size) {
-    BrianButtonSize.xsmall || BrianButtonSize.small => BrianSpacing.x3Point5,
-    BrianButtonSize.medium => BrianSpacing.x4,
-    BrianButtonSize.large => BrianSpacing.x5,
-  };
-  double get paddingY => switch (size) {
-    BrianButtonSize.xsmall => BrianSpacing.x1Point5,
-    BrianButtonSize.small => BrianSpacing.x2,
-    BrianButtonSize.medium => BrianSpacing.x2Point5,
-    BrianButtonSize.large => BrianSpacing.x3Point5,
-  };
-  double get gap => switch (size) {
-    BrianButtonSize.xsmall || BrianButtonSize.small => BrianSpacing.x1,
-    BrianButtonSize.medium => BrianSpacing.x1Point5,
-    BrianButtonSize.large => BrianSpacing.x2,
-  };
-  double get iconSize => switch (size) {
-    BrianButtonSize.xsmall || BrianButtonSize.small => BrianSpacing.x3Point5,
-    BrianButtonSize.medium => BrianSpacing.x4,
-    BrianButtonSize.large => 22,
-  };
-  double get progressSize => switch (size) {
-    BrianButtonSize.xsmall || BrianButtonSize.small => 14,
-    BrianButtonSize.medium => 16,
-    BrianButtonSize.large => 18,
-  };
-  TextStyle get textStyle => switch (size) {
-    BrianButtonSize.xsmall => typography.t3Bold,
-    BrianButtonSize.small || BrianButtonSize.medium => typography.t4Bold,
-    BrianButtonSize.large => typography.t6Bold,
-  };
 }
 
 class _ButtonColors {

@@ -8,7 +8,9 @@ import 'accordion_playground.dart';
 import 'alert_dialog_examples.dart';
 import 'badge_examples.dart';
 import 'browser.dart';
+import 'bottom_sheet_examples.dart';
 import 'button_playground.dart';
+import 'button_group_examples.dart';
 import 'catalog.dart';
 import 'foundation_preview.dart';
 import 'guide.dart';
@@ -219,6 +221,10 @@ class _DocsShellState extends State<DocsShell> {
                         const AlertDialogExamples(),
                       if (page.path == '/components/badge')
                         const BadgeExamples(),
+                      if (page.path == '/components/bottom-sheet')
+                        const BottomSheetExamples(),
+                      if (page.path == '/components/button-group')
+                        const ButtonGroupExamples(),
                       if (page.path == '/components/button')
                         const ButtonPlayground(),
                       FoundationPreview(path: page.path),

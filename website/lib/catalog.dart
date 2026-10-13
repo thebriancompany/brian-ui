@@ -69,11 +69,25 @@ const pages = [
     source: 'doc/components/button/button.md',
   ),
   DocPage(
+    '/components/button-group',
+    'Button Group',
+    'COMPONENTS',
+    '라벨 길이에 맞춰 가로·세로로 전환되는 액션 버튼 묶음.',
+    source: 'doc/components/button_group/button_group.md',
+  ),
+  DocPage(
     '/components/accordion',
     'Accordion',
     'COMPONENTS',
     '관련 정보를 필요한 만큼 접고 펼치는 목록.',
     source: 'doc/components/accordion/accordion.md',
+  ),
+  DocPage(
+    '/components/bottom-sheet',
+    'Bottom Sheet',
+    'COMPONENTS',
+    '화면 아래에서 열리는 선택과 탐색의 공간.',
+    source: 'doc/components/bottom_sheet/bottom_sheet.md',
   ),
   DocPage(
     '/components/alert-dialog',
