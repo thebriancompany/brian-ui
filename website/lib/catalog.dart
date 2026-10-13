@@ -83,6 +83,13 @@ const pages = [
     source: 'doc/components/alert_dialog/alert_dialog.md',
   ),
   DocPage(
+    '/components/badge',
+    'Badge',
+    'COMPONENTS',
+    '상태와 부가 정보를 간결하게 전달하는 라벨.',
+    source: 'doc/components/badge/badge.md',
+  ),
+  DocPage(
     '/foundations/color-reference',
     '전체 색상값',
     'REFERENCE',
