@@ -1,11 +1,12 @@
 import 'package:flutter/foundation.dart';
 
 import '../color/brian_colors.dart';
+import '../elevation/brian_shadows.dart';
 import '../typography/brian_typography.dart';
 
 /// Brian UI의 시각적 설정을 담는 불변 값입니다.
 ///
-/// 색상과 타이포그래피를 함께 전달합니다.
+/// 색상·타이포그래피·그림자를 함께 전달합니다.
 ///
 /// {@category Theme}
 @immutable
@@ -13,6 +14,7 @@ class BrianThemeData {
   const BrianThemeData({
     required this.colors,
     this.typography = const BrianTypography(),
+    this.shadows = const BrianShadows(),
   });
 
   static final light = BrianThemeData(colors: BrianColors.light);
@@ -30,16 +32,22 @@ class BrianThemeData {
 
   final BrianTypography typography;
 
+  final BrianShadows shadows;
+
   /// 색상에 지정된 화면 모드입니다.
   Brightness get brightness => colors.brightness;
 
-  BrianThemeData copyWith({BrianColors? colors, BrianTypography? typography}) =>
-      BrianThemeData(
-        colors: colors ?? this.colors,
-        typography: typography ?? this.typography,
-      );
+  BrianThemeData copyWith({
+    BrianColors? colors,
+    BrianTypography? typography,
+    BrianShadows? shadows,
+  }) => BrianThemeData(
+    colors: colors ?? this.colors,
+    typography: typography ?? this.typography,
+    shadows: shadows ?? this.shadows,
+  );
 
-  /// 색상과 타이포그래피를 [other]까지 보간합니다.
+  /// 색상·타이포그래피·그림자를 [other]까지 보간합니다.
   ///
   /// 스타일 보간의 제약은 [BrianTypography.lerp]를 따릅니다.
   ///
@@ -48,6 +56,7 @@ class BrianThemeData {
   BrianThemeData lerp(BrianThemeData other, double t) => BrianThemeData(
     colors: colors.lerp(other.colors, t),
     typography: typography.lerp(other.typography, t),
+    shadows: shadows.lerp(other.shadows, t),
   );
 
   @override
@@ -55,8 +64,9 @@ class BrianThemeData {
       identical(this, other) ||
       other is BrianThemeData &&
           colors == other.colors &&
-          typography == other.typography;
+          typography == other.typography &&
+          shadows == other.shadows;
 
   @override
-  int get hashCode => Object.hash(colors, typography);
+  int get hashCode => Object.hash(colors, typography, shadows);
 }
