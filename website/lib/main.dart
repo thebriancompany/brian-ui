@@ -6,9 +6,10 @@ import 'package:flutter/services.dart' show rootBundle;
 
 import 'accordion_playground.dart';
 import 'alert_dialog_examples.dart';
-import 'callout_examples.dart';
+import 'badge_examples.dart';
 import 'browser.dart';
 import 'button_playground.dart';
+import 'callout_examples.dart';
 import 'catalog.dart';
 import 'foundation_preview.dart';
 import 'guide.dart';
@@ -217,10 +218,12 @@ class _DocsShellState extends State<DocsShell> {
                         const AccordionPlayground(),
                       if (page.path == '/components/alert-dialog')
                         const AlertDialogExamples(),
-                      if (page.path == '/components/callout')
-                        const CalloutExamples(),
                       if (page.path == '/components/button')
                         const ButtonPlayground(),
+                      if (page.path == '/components/badge')
+                        const BadgeExamples(),
+                      if (page.path == '/components/callout')
+                        const CalloutExamples(),
                       FoundationPreview(path: page.path),
                       if (page.asset != null)
                         Guide(page: page, onNavigate: _navigate),

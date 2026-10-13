@@ -62,13 +62,6 @@ const pages = [
     source: 'doc/theming/overview.md',
   ),
   DocPage(
-    '/components/button',
-    'Button',
-    'COMPONENTS',
-    '사용자의 의도를 실제 액션으로 연결하는 버튼.',
-    source: 'doc/components/button/button.md',
-  ),
-  DocPage(
     '/components/accordion',
     'Accordion',
     'COMPONENTS',
@@ -81,6 +74,20 @@ const pages = [
     'COMPONENTS',
     '명시적인 선택과 확인을 요청하는 알림 다이얼로그.',
     source: 'doc/components/alert_dialog/alert_dialog.md',
+  ),
+  DocPage(
+    '/components/badge',
+    'Badge',
+    'COMPONENTS',
+    '상태와 부가 정보를 간결하게 전달하는 라벨.',
+    source: 'doc/components/badge/badge.md',
+  ),
+  DocPage(
+    '/components/button',
+    'Button',
+    'COMPONENTS',
+    '사용자의 의도를 실제 액션으로 연결하는 버튼.',
+    source: 'doc/components/button/button.md',
   ),
   DocPage(
     '/components/callout',
