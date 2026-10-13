@@ -1,7 +1,7 @@
 # brian-ui
 
 Flutter 기본 위젯 계층으로 구성하는 독립 디자인 시스템입니다.
-패키지 이름은 `brian_ui`이며, 색상·타이포그래피·그림자·모서리·간격·테마와 버튼·아코디언을 제공합니다.
+패키지 이름은 `brian_ui`이며, 색상·타이포그래피·그림자·모서리·간격·테마와 버튼·아코디언·알림 다이얼로그를 제공합니다.
 
 - 라이트·다크 팔레트와 고정 흰색·검은색/알파 값
 - 전경·배경·테두리의 역할 색상, 상호작용 상태와 배너 배경
@@ -11,6 +11,7 @@ Flutter 기본 위젯 계층으로 구성하는 독립 디자인 시스템입니
 - `BrianTheme`을 통한 테마 전달과 지역 테마 재정의
 - 7가지 variant와 4가지 size, 로딩·키보드 입력을 지원하는 `BrianButton`
 - 단일·다중 펼침과 상태 표시 교체를 지원하는 `BrianAccordion`
+- 자동 액션 배치와 명시적 선택을 지원하는 `BrianAlertDialog`
 - 한국어 API 주석, 색상 선택 가이드와 대비 측정표
 
 ## 사용하기
@@ -69,13 +70,14 @@ class Greeting extends StatelessWidget {
 - 간격 선택과 안전 영역: `doc/foundations/spacing/spacing.md`
 - 버튼 사용과 상호작용: `doc/components/button/button.md`
 - 아코디언 사용과 상호작용: `doc/components/accordion/accordion.md`
+- 알림 다이얼로그 사용과 닫기 정책: `doc/components/alert_dialog/alert_dialog.md`
 - 테마 연결과 사용자 정의: `doc/theming/overview.md`
 - 전체 색상값: `doc/foundations/color/color_reference.md`
 - 전경·배경 대비 측정: `doc/foundations/color/color_contrast.md`
 
 `///` 주석은 IDE 도움말과 API 문서의 원본입니다.
 `dart doc`으로 `doc/api/`에 HTML을 생성할 수 있으며, `dartdoc_options.yaml`의
-색상·타이포그래피·고도·모서리·간격·테마·버튼·아코디언·색상값·대비 분류에서 가이드도 함께 읽을 수 있습니다.
+색상·타이포그래피·고도·모서리·간격·테마·버튼·아코디언·알림 다이얼로그·색상값·대비 분류에서 가이드도 함께 읽을 수 있습니다.
 생성된 문서는 정적 웹 호스팅에 배포할 수 있습니다. 향후 pub.dev에 배포하면
 공개 API 문서도 자동으로 호스팅됩니다.
 

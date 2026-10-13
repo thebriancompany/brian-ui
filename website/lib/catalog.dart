@@ -76,6 +76,13 @@ const pages = [
     source: 'doc/components/accordion/accordion.md',
   ),
   DocPage(
+    '/components/alert-dialog',
+    'Alert Dialog',
+    'COMPONENTS',
+    '명시적인 선택과 확인을 요청하는 알림 다이얼로그.',
+    source: 'doc/components/alert_dialog/alert_dialog.md',
+  ),
+  DocPage(
     '/foundations/color-reference',
     '전체 색상값',
     'REFERENCE',
