@@ -16,6 +16,8 @@ Brian UI는 Flutter 기본 위젯 계층으로 만드는 독립 디자인 시스
 
 - [Badge 사용 가이드](https://github.com/thebriancompany/brian-ui/blob/develop/doc/components/badge/badge.md) — 상태·분류·부가 정보 라벨
 
+- [Chip 사용 가이드](https://github.com/thebriancompany/brian-ui/blob/develop/doc/components/chip/chip.md) — 선택·필터·추천·입력값 삭제
+
 ## 디렉터리
 
 - [lib](https://github.com/thebriancompany/brian-ui/tree/develop/lib) — 디자인 토큰, 테마와 Flutter 컴포넌트
