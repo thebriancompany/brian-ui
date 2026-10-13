@@ -9,6 +9,9 @@ dartdoc:
     Elevation:
       markdown: doc/foundations/elevation/elevation.md
       displayName: 고도
+    Radius:
+      markdown: doc/foundations/radius/radius.md
+      displayName: 모서리
     Theme:
       markdown: doc/theming/overview.md
       displayName: 테마
@@ -23,6 +26,7 @@ dartdoc:
     - Color
     - Typography
     - Elevation
+    - Radius
     - Theme
     - ColorReference
     - Contrast
