@@ -104,6 +104,13 @@ const pages = [
     source: 'doc/components/badge/badge.md',
   ),
   DocPage(
+    '/components/callout',
+    'Callout',
+    'COMPONENTS',
+    '화면 흐름 안에서 안내와 상태를 강조하는 메시지.',
+    source: 'doc/components/callout/callout.md',
+  ),
+  DocPage(
     '/foundations/color-reference',
     '전체 색상값',
     'REFERENCE',
