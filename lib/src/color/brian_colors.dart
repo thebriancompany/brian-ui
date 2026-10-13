@@ -110,22 +110,22 @@ class BrianColors {
   /// 팔레트는 전달한 화면 모드에 맞게 준비해야 합니다. 상태 색상은 임의의
   /// 투명도 계산 대신 명시된 단계에 연결합니다. 배너는 별도 값입니다.
   /// [brandScale]은 브랜드 역할에만 적용하며 [palette]는 변경하지 않습니다.
-  /// 생략하면 `palette.orange`를 사용합니다. 브랜드 스케일도 화면 모드에
-  /// 맞게 준비하고, 흰색 `onBrandSolid`와 새 배경의 대비를 확인해야 합니다.
+  /// 생략하면 `palette.blue`를 사용합니다. 브랜드 스케일도 화면 모드에
+  /// 맞게 준비하고, 모드별 `onBrandSolid`와 새 배경의 대비를 확인해야 합니다.
   factory BrianColors.fromPalette({
     required BrianPalette palette,
     required Brightness brightness,
     BrianColorScale? brandScale,
   }) {
-    final brand = brandScale ?? palette.orange;
+    final brand = brandScale ?? palette.blue;
     final isDark = brightness == Brightness.dark;
     return BrianColors(
       brightness: brightness,
       palette: palette,
       banner: isDark ? BrianBannerColors.dark : BrianBannerColors.light,
       foreground: BrianForegroundColors(
-        brand: isDark ? brand.step700 : brand.step600,
-        brandContrast: brand.step700,
+        brand: isDark ? brand.step700 : brand.step800,
+        brandContrast: isDark ? brand.step700 : brand.step800,
         critical: palette.red.step700,
         criticalContrast: palette.red.step900,
         disabled: palette.gray.step500,
@@ -134,7 +134,9 @@ class BrianColors {
         neutral: palette.gray.step1000,
         neutralMuted: palette.gray.step800,
         neutralSubtle: palette.gray.step700,
-        onBrandSolid: BrianStaticColors.white,
+        onBrandSolid: isDark
+            ? BrianStaticColors.black
+            : BrianStaticColors.white,
         onCriticalSolid: BrianStaticColors.white,
         onInformativeSolid: BrianStaticColors.white,
         onNeutralSolid: isDark ? palette.gray.step100 : palette.gray.step0,
@@ -147,8 +149,8 @@ class BrianColors {
         warningContrast: palette.yellow.step900,
       ),
       background: BrianBackgroundColors(
-        brandSolid: isDark ? brand.step700 : brand.step600,
-        brandSolidPressed: isDark ? brand.step800 : brand.step700,
+        brandSolid: isDark ? brand.step700 : brand.step800,
+        brandSolidPressed: isDark ? brand.step800 : brand.step900,
         brandWeak: brand.step100,
         brandWeakPressed: brand.step200,
         criticalSolid: isDark ? palette.red.step600 : palette.red.step700,

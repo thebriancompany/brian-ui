@@ -6,8 +6,8 @@
 
 | API | 라이트 | 다크 |
 | --- | --- | --- |
-| `foreground.brand` | `#ff6600` | `#ff6600` |
-| `foreground.brandContrast` | `#e14d00` | `#ff6600` |
+| `foreground.brand` | `#135fcd` | `#41a2f9` |
+| `foreground.brandContrast` | `#135fcd` | `#41a2f9` |
 | `foreground.critical` | `#fa342c` | `#ff6e60` |
 | `foreground.criticalContrast` | `#921708` | `#f8c5c3` |
 | `foreground.disabled` | `#d1d3d8` | `#5b606a` |
@@ -16,7 +16,7 @@
 | `foreground.neutral` | `#1a1c20` | `#f3f4f5` |
 | `foreground.neutralMuted` | `#555d6d` | `#dcdee3` |
 | `foreground.neutralSubtle` | `#868b94` | `#b0b3ba` |
-| `foreground.onBrandSolid` | `#ffffff` | `#ffffff` |
+| `foreground.onBrandSolid` | `#ffffff` | `#000000` |
 | `foreground.onCriticalSolid` | `#ffffff` | `#ffffff` |
 | `foreground.onInformativeSolid` | `#ffffff` | `#ffffff` |
 | `foreground.onNeutralSolid` | `#ffffff` | `#16171b` |
@@ -27,10 +27,10 @@
 | `foreground.positiveContrast` | `#075445` | `#93e5c0` |
 | `foreground.warning` | `#9b7821` | `#ca901c` |
 | `foreground.warningContrast` | `#4f3e1f` | `#e5d49b` |
-| `background.brandSolid` | `#ff6600` | `#ff6600` |
-| `background.brandSolidPressed` | `#e14d00` | `#ff9e65` |
-| `background.brandWeak` | `#fff2ec` | `#31241f` |
-| `background.brandWeakPressed` | `#ffe8db` | `#4b291c` |
+| `background.brandSolid` | `#135fcd` | `#41a2f9` |
+| `background.brandSolidPressed` | `#0b4596` | `#83bcf9` |
+| `background.brandWeak` | `#eff6ff` | `#202742` |
+| `background.brandWeakPressed` | `#e2edfc` | `#1e3352` |
 | `background.criticalSolid` | `#fa342c` | `#f73526` |
 | `background.criticalSolidPressed` | `#ca1d13` | `#ff6e60` |
 | `background.criticalWeak` | `#fdf0f0` | `#322323` |
@@ -67,8 +67,8 @@
 | `background.warningSolidPressed` | `#e9c647` | `#e5d49b` |
 | `background.warningWeak` | `#fff7de` | `#302819` |
 | `background.warningWeakPressed` | `#fdefb9` | `#413218` |
-| `stroke.brandSolid` | `#e14d00` | `#ff6600` |
-| `stroke.brandWeak` | `#ffd5c0` | `#6b311c` |
+| `stroke.brandSolid` | `#217cf9` | `#41a2f9` |
+| `stroke.brandWeak` | `#cbdffa` | `#1a4275` |
 | `stroke.criticalSolid` | `#fa342c` | `#ff6e60` |
 | `stroke.criticalWeak` | `#fed4d2` | `#742826` |
 | `stroke.focusRing` | `#217cf9` | `#1e82eb` |

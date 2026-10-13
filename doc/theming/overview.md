@@ -47,7 +47,7 @@ final colors = base.colors;
 final custom = base.copyWith(
   colors: colors.copyWith(
     foreground: colors.foreground.copyWith(
-      onBrandSolid: BrianStaticColors.black,
+      neutral: colors.palette.gray.step900,
     ),
   ),
 );
