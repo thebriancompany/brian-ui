@@ -39,6 +39,9 @@ dartdoc:
     Callout:
       markdown: doc/components/callout/callout.md
       displayName: 콜아웃
+    Divider:
+      markdown: doc/components/divider/divider.md
+      displayName: 구분선
     ScrollFog:
       markdown: doc/components/scroll_fog/scroll_fog.md
       displayName: 스크롤 포그
@@ -63,6 +66,7 @@ dartdoc:
     - AlertDialog
     - Badge
     - Callout
+    - Divider
     - ScrollFog
     - ColorReference
     - Contrast

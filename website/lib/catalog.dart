@@ -111,6 +111,13 @@ const pages = [
     source: 'doc/components/callout/callout.md',
   ),
   DocPage(
+    '/components/divider',
+    'Divider',
+    'COMPONENTS',
+    '섹션과 반복 항목 사이의 관계를 드러내는 구분선.',
+    source: 'doc/components/divider/divider.md',
+  ),
+  DocPage(
     '/components/scroll-fog',
     'Scroll Fog',
     'COMPONENTS',
