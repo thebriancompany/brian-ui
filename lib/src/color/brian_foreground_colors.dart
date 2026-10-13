@@ -62,7 +62,8 @@ class BrianForegroundColors {
 
   /// `background.brandSolid` 위에 놓는 전경입니다.
   ///
-  /// 기본 짝도 작은 글자의 4.5:1 대비를 항상 만족하지는 않습니다. 색상 가이드의 대비표를 확인합니다.
+  /// 기본 테마에서는 라이트·다크 모두 흰색입니다. 기본 배경과의 대비는 약 2.94:1이며,
+  /// 일반 텍스트의 4.5:1 기준에 미달합니다. 색상 가이드의 대비표를 확인합니다.
   final Color onBrandSolid;
 
   /// `background.criticalSolid` 위에 놓는 전경입니다.

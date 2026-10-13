@@ -1,7 +1,9 @@
+import 'dart:ui' as ui;
+
 import 'package:brian_ui/brian_ui.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -28,6 +30,173 @@ Color background(WidgetTester tester) =>
     (tester.widget<Container>(surface).decoration! as ShapeDecoration).color!;
 
 void main() {
+  testWidgets('기본 neutralSolid 라벨은 모든 크기와 활성 상태에서 4.5:1 이상이다', (tester) async {
+    for (final theme in [BrianThemeData.light, BrianThemeData.dark]) {
+      for (final size in BrianButtonSize.values) {
+        Widget button({bool loading = false}) => host(
+          BrianButton(
+            onPressed: () {},
+            size: size,
+            isLoading: loading,
+            child: const Text('저장'),
+          ),
+          theme: theme,
+        );
+        void checkContrast() {
+          final label = tester.widget<RichText>(find.byType(RichText));
+          expect(
+            contrast(label.text.style!.color!, background(tester)),
+            greaterThanOrEqualTo(4.5),
+            reason: '${theme.colors.brightness.name} / ${size.name}',
+          );
+        }
+
+        await tester.pumpWidget(button());
+        await tester.pumpAndSettle();
+        checkContrast();
+        final gesture = await tester.startGesture(tester.getCenter(surface));
+        await tester.pump(const Duration(milliseconds: 150));
+        await tester.pumpAndSettle();
+        checkContrast();
+        await gesture.up();
+        final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+        await mouse.addPointer(location: Offset.zero);
+        await mouse.moveTo(tester.getCenter(surface));
+        await tester.pumpAndSettle();
+        checkContrast();
+        await mouse.removePointer();
+        await tester.pumpWidget(button(loading: true));
+        await tester.pump(const Duration(milliseconds: 200));
+        checkContrast();
+        await tester.pumpWidget(const SizedBox.shrink());
+      }
+    }
+  });
+
+  testWidgets('solid 버튼 포커스 링은 표면과 대비되며 버튼 밖에 간격을 두고 그려진다', (tester) async {
+    for (final theme in [BrianThemeData.light, BrianThemeData.dark]) {
+      final bg = theme.colors.background;
+      for (final layer in [
+        bg.layerDefault,
+        bg.layerBasement,
+        bg.layerFloating,
+        bg.layerDefaultPressed,
+        bg.layerFloatingPressed,
+      ]) {
+        expect(
+          contrast(theme.colors.stroke.focusRing, layer),
+          greaterThanOrEqualTo(3),
+        );
+      }
+      for (final variant in [
+        BrianButtonVariant.brandSolid,
+        BrianButtonVariant.criticalSolid,
+      ]) {
+        for (final size in [BrianButtonSize.xsmall, BrianButtonSize.medium]) {
+          final boundaryKey = GlobalKey();
+          final focus = FocusNode();
+          addTearDown(focus.dispose);
+          await tester.pumpWidget(
+            host(
+              RepaintBoundary(
+                key: boundaryKey,
+                child: ColoredBox(
+                  color: bg.layerDefault,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: BrianButton(
+                      focusNode: focus,
+                      onPressed: () {},
+                      variant: variant,
+                      size: size,
+                      child: const Text('실행'),
+                    ),
+                  ),
+                ),
+              ),
+              theme: theme,
+            ),
+          );
+          await tester.pumpAndSettle();
+          final before = tester.getSize(surface);
+          await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+          await tester.pumpAndSettle();
+          expect(focus.hasFocus, isTrue);
+          expect(tester.getSize(surface), before);
+          final bounds = tester
+              .getRect(surface)
+              .shift(-tester.getTopLeft(find.byKey(boundaryKey)));
+          final boundary = tester.renderObject<RenderRepaintBoundary>(
+            find.byKey(boundaryKey),
+          );
+          await tester.runAsync(() async {
+            final image = await boundary.toImage();
+            try {
+              final data = (await image.toByteData(
+                format: ui.ImageByteFormat.rawRgba,
+              ))!;
+              Color pixel(int x, int y) {
+                final offset = (y * image.width + x) * 4;
+                return Color.fromARGB(
+                  data.getUint8(offset + 3),
+                  data.getUint8(offset),
+                  data.getUint8(offset + 1),
+                  data.getUint8(offset + 2),
+                );
+              }
+
+              final left = bounds.left.round();
+              final centerY = bounds.center.dy.floor();
+              expect(pixel(left - 5, centerY), bg.layerDefault);
+              expect(pixel(left - 3, centerY), theme.colors.stroke.focusRing);
+              expect(pixel(left - 1, centerY), bg.layerDefault);
+              expect(pixel(left + 2, centerY), background(tester));
+            } finally {
+              image.dispose();
+            }
+          });
+          await tester.pumpWidget(const SizedBox.shrink());
+        }
+      }
+    }
+  });
+
+  testWidgets('상위 앱 글꼴을 상속하며 크기·굵기·전경은 버튼 스타일을 따른다', (tester) async {
+    for (final theme in [BrianThemeData.light, BrianThemeData.dark]) {
+      for (final size in BrianButtonSize.values) {
+        await tester.pumpWidget(
+          host(
+            DefaultTextStyle(
+              style: const TextStyle(
+                fontFamily: 'AppFont',
+                fontFamilyFallback: ['AppFallback'],
+                fontSize: 30,
+                fontWeight: FontWeight.w400,
+                color: Color(0xFF123456),
+              ),
+              child: BrianButton(
+                onPressed: () {},
+                size: size,
+                child: const Text('저장'),
+              ),
+            ),
+            theme: theme,
+          ),
+        );
+        await tester.pumpAndSettle();
+        final style = tester
+            .widget<RichText>(find.byType(RichText))
+            .text
+            .style!;
+        expect(style.fontFamily, 'AppFont');
+        expect(style.fontFamilyFallback, ['AppFallback']);
+        expect(style.fontSize, [13.0, 14.0, 14.0, 18.0][size.index]);
+        expect(style.fontWeight, FontWeight.w700);
+        expect(style.color, theme.colors.foreground.onNeutralSolid);
+      }
+    }
+  });
+
   testWidgets('모든 variant와 size가 라이트·다크에서 렌더링된다', (tester) async {
     for (final theme in [BrianThemeData.light, BrianThemeData.dark]) {
       for (final variant in BrianButtonVariant.values) {
@@ -71,16 +240,19 @@ void main() {
         host(BrianButton(onPressed: callback, child: const Text('저장')));
     await tester.pumpWidget(button(() => calls++));
     await tester.pump(const Duration(milliseconds: 200));
-    expect(background(tester), BrianColors.light.background.brandSolid);
+    expect(background(tester), BrianColors.light.background.neutralSolid);
     final gesture = await tester.startGesture(tester.getCenter(surface));
     await tester.pump(const Duration(milliseconds: 150));
     await tester.pump(const Duration(milliseconds: 200));
-    expect(background(tester), BrianColors.light.background.brandSolidPressed);
+    expect(
+      background(tester),
+      BrianColors.light.background.neutralSolidPressed,
+    );
     await gesture.cancel();
     await tester.pump();
     expect(calls, 0);
     await tester.pump(const Duration(milliseconds: 200));
-    expect(background(tester), BrianColors.light.background.brandSolid);
+    expect(background(tester), BrianColors.light.background.neutralSolid);
     await tester.tap(surface);
     expect(calls, 1);
     final pending = await tester.startGesture(tester.getCenter(surface));
@@ -121,7 +293,10 @@ void main() {
     await mouse.moveTo(tester.getCenter(surface));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
-    expect(background(tester), BrianColors.light.background.brandSolidPressed);
+    expect(
+      background(tester),
+      BrianColors.light.background.neutralSolidPressed,
+    );
     await mouse.removePointer();
   });
 
@@ -159,7 +334,7 @@ void main() {
         BrianButton.icon(
           onPressed: () {},
           semanticLabel: '닫기',
-          icon: const SizedBox(width: 16, height: 16),
+          icon: const SizedBox(key: ValueKey('icon'), width: 16, height: 16),
         ),
       ),
     );
@@ -167,6 +342,11 @@ void main() {
     expect(node.label, '닫기');
     expect(node.getSemanticsData().flagsCollection.isButton, isTrue);
     expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
+    expect(background(tester), BrianColors.light.background.neutralSolid);
+    expect(
+      IconTheme.of(tester.element(find.byKey(const ValueKey('icon')))).color,
+      BrianColors.light.foreground.onNeutralSolid,
+    );
     semantics.dispose();
   });
 
@@ -193,10 +373,17 @@ void main() {
   });
 
   testWidgets('테마 전환과 사용자 정의 역할 색상을 반영한다', (tester) async {
-    final child = BrianButton(onPressed: () {}, child: const Text('저장'));
+    final child = BrianButton(
+      onPressed: () {},
+      variant: BrianButtonVariant.brandSolid,
+      child: const Text('저장'),
+    );
     await tester.pumpWidget(host(child));
     final custom = BrianThemeData.dark.copyWith(
       colors: BrianColors.dark.copyWith(
+        foreground: BrianColors.dark.foreground.copyWith(
+          onBrandSolid: const Color(0xFFFEDCBA),
+        ),
         background: BrianColors.dark.background.copyWith(
           brandSolid: const Color(0xFF123456),
         ),
@@ -205,6 +392,8 @@ void main() {
     await tester.pumpWidget(host(child, theme: custom));
     await tester.pump(const Duration(milliseconds: 200));
     expect(background(tester), const Color(0xFF123456));
+    final label = tester.widget<RichText>(find.byType(RichText));
+    expect(label.text.style!.color, const Color(0xFFFEDCBA));
   });
   testWidgets('모든 variant는 비활성·로딩 색상을 라이트·다크에서 구분한다', (tester) async {
     for (final theme in [BrianThemeData.light, BrianThemeData.dark]) {
@@ -322,10 +511,13 @@ void main() {
         .value;
     expect(scale, greaterThan(0.97));
     expect(scale, lessThan(1));
-    expect(background(tester), isNot(BrianColors.light.background.brandSolid));
     expect(
       background(tester),
-      isNot(BrianColors.light.background.brandSolidPressed),
+      isNot(BrianColors.light.background.neutralSolid),
+    );
+    expect(
+      background(tester),
+      isNot(BrianColors.light.background.neutralSolidPressed),
     );
     expect(tester.getSize(surface), before);
     await gesture.cancel();
@@ -334,7 +526,7 @@ void main() {
       tester.widget<ScaleTransition>(find.byType(ScaleTransition)).scale.value,
       1,
     );
-    expect(background(tester), BrianColors.light.background.brandSolid);
+    expect(background(tester), BrianColors.light.background.neutralSolid);
   });
 
   testWidgets('모션 감소를 켜면 진행 중인 축소를 복원하고 색상을 즉시 적용한다', (tester) async {
@@ -354,11 +546,14 @@ void main() {
       tester.widget<ScaleTransition>(find.byType(ScaleTransition)).scale.value,
       1,
     );
-    expect(background(tester), BrianColors.light.background.brandSolidPressed);
+    expect(
+      background(tester),
+      BrianColors.light.background.neutralSolidPressed,
+    );
     await gesture.up();
     await tester.pump();
     await tester.pump();
-    expect(background(tester), BrianColors.light.background.brandSolid);
+    expect(background(tester), BrianColors.light.background.neutralSolid);
     expect(tester.binding.hasScheduledFrame, isFalse);
   });
 
@@ -385,4 +580,10 @@ void main() {
       1,
     );
   });
+}
+
+double contrast(Color foreground, Color background) {
+  final a = Color.alphaBlend(foreground, background).computeLuminance();
+  final b = background.computeLuminance();
+  return a > b ? (a + 0.05) / (b + 0.05) : (b + 0.05) / (a + 0.05);
 }

@@ -34,6 +34,8 @@ enum BrianButtonSize { xsmall, small, medium, large }
 /// 유지하며 진행 표시를 보여주고 실행을 막습니다. 로딩 시에도 라벨은
 /// 접근성 트리에 남습니다. [loadingLabel]로 진행 상태 설명을 지정합니다.
 /// 너비는 콘텐츠에 맞추며 부모의 tight 제약으로 전체 너비를 채울 수 있습니다.
+/// 기본 표현은 [BrianButtonVariant.neutralSolid]입니다. 브랜드를 강조하는
+/// 액션에는 [BrianButtonVariant.brandSolid]를 명시합니다.
 ///
 /// {@category Button}
 class BrianButton extends StatefulWidget {
@@ -41,7 +43,7 @@ class BrianButton extends StatefulWidget {
     super.key,
     required this.onPressed,
     required this.child,
-    this.variant = BrianButtonVariant.brandSolid,
+    this.variant = BrianButtonVariant.neutralSolid,
     this.size = BrianButtonSize.medium,
     this.leading,
     this.trailing,
@@ -59,7 +61,7 @@ class BrianButton extends StatefulWidget {
     required this.onPressed,
     required Widget icon,
     required String semanticLabel,
-    this.variant = BrianButtonVariant.brandSolid,
+    this.variant = BrianButtonVariant.neutralSolid,
     this.size = BrianButtonSize.medium,
     this.isLoading = false,
     this.loadingLabel = '처리 중',
@@ -246,6 +248,8 @@ class _BrianButtonState extends State<BrianButton> {
                               side: BorderSide(
                                 color: theme.colors.stroke.focusRing,
                                 width: 2,
+                                // 2픽셀 간격을 두고 바깥쪽 2~4픽셀에 그립니다.
+                                strokeAlign: 3,
                               ),
                             ),
                           )
@@ -257,8 +261,8 @@ class _BrianButtonState extends State<BrianButton> {
                       vertical: metrics.paddingY,
                     ),
                     child: DefaultTextStyle(
-                      style: metrics.textStyle.copyWith(
-                        color: colors.foreground,
+                      style: DefaultTextStyle.of(context).style.merge(
+                        metrics.textStyle.copyWith(color: colors.foreground),
                       ),
                       textAlign: TextAlign.center,
                       child: IconTheme(

@@ -10,6 +10,7 @@ APCA 점수가 아니며, 모든 토큰 조합이나 완성된 UI의 접근성�
 | `neutralSubtle` / `layerDefault` | 3.42:1 | 8.53:1 | 미달 / 충족 |
 | `placeholder` / `layerDefault` | 2.10:1 | 5.23:1 | 미달 / 충족 |
 | `onBrandSolid` / `brandSolid` | 2.94:1 | 2.94:1 | 미달 / 미달 |
+| `onBrandSolid` / `brandSolidPressed` | 3.99:1 | 2.03:1 | 미달 / 미달 |
 | `brandContrast` / `brandWeak` | 3.64:1 | 5.10:1 | 미달 / 충족 |
 | `onCriticalSolid` / `criticalSolid` | 3.76:1 | 3.82:1 | 미달 / 미달 |
 | `criticalContrast` / `criticalWeak` | 8.05:1 | 9.83:1 | 충족 / 충족 |
