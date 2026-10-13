@@ -160,16 +160,26 @@ class _BrianCalloutState extends State<BrianCallout> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (widget.title != null) ...[
-                      DefaultTextStyle.merge(
-                        style: theme.typography.t5Bold.copyWith(
-                          color: foreground,
-                        ),
-                        child: widget.title!,
+                    Semantics(
+                      container: !actionable,
+                      liveRegion: !actionable && widget.liveRegion,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (widget.title != null) ...[
+                            DefaultTextStyle.merge(
+                              style: theme.typography.t5Bold.copyWith(
+                                color: foreground,
+                              ),
+                              child: widget.title!,
+                            ),
+                            const SizedBox(height: BrianSpacing.x1),
+                          ],
+                          widget.description,
+                        ],
                       ),
-                      const SizedBox(height: BrianSpacing.x1),
-                    ],
-                    widget.description,
+                    ),
                     if (widget.action != null) ...[
                       const SizedBox(height: BrianSpacing.x2),
                       widget.action!,
@@ -211,7 +221,6 @@ class _BrianCalloutState extends State<BrianCallout> {
       return Semantics(
         container: true,
         explicitChildNodes: true,
-        liveRegion: widget.liveRegion,
         child: content,
       );
     }
@@ -254,7 +263,11 @@ class _BrianCalloutState extends State<BrianCallout> {
             actions: {
               ActivateIntent: CallbackAction<ActivateIntent>(
                 onInvoke: (_) {
-                  _setPressed(true);
+                  final keys = HardwareKeyboard.instance.logicalKeysPressed;
+                  if (keys.contains(LogicalKeyboardKey.enter) ||
+                      keys.contains(LogicalKeyboardKey.space)) {
+                    _setPressed(true);
+                  }
                   widget.onPressed!();
                   return null;
                 },

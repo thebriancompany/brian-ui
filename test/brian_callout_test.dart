@@ -200,6 +200,82 @@ void main() {
     expect(focusDecoration(), isNotNull);
   });
 
+  testWidgets('라이브 알림은 변경된 메시지를 포함하고 버튼과 분리된다', (tester) async {
+    final semantics = tester.ensureSemantics();
+    try {
+      for (final message in ['처리 중', '처리 완료']) {
+        await tester.pumpWidget(
+          host(
+            BrianCallout(
+              title: const Text('안내'),
+              description: Text(message),
+              liveRegion: true,
+              onDismiss: () {},
+              action: BrianButton(onPressed: () {}, child: const Text('상세 보기')),
+            ),
+          ),
+        );
+        expect(
+          tester.getSemantics(find.text(message)),
+          matchesSemantics(label: '안내\n$message', isLiveRegion: true),
+        );
+        expect(find.bySemanticsLabel('안내 닫기'), findsOneWidget);
+        expect(find.bySemanticsLabel('상세 보기'), findsOneWidget);
+      }
+    } finally {
+      semantics.dispose();
+    }
+  });
+
+  testWidgets('직접 액션과 다른 단축키 실행은 눌림 배경을 남기지 않는다', (tester) async {
+    var calls = 0;
+    final focus = FocusNode();
+    addTearDown(focus.dispose);
+    await tester.pumpWidget(
+      host(
+        Shortcuts(
+          shortcuts: const {
+            SingleActivator(LogicalKeyboardKey.keyA): ActivateIntent(),
+          },
+          child: BrianCallout(
+            description: const Text('배송 확인'),
+            focusNode: focus,
+            onPressed: () => calls++,
+          ),
+        ),
+      ),
+    );
+    focus.requestFocus();
+    await tester.pump();
+    Actions.invoke(tester.element(find.text('배송 확인')), const ActivateIntent());
+    await tester.pump();
+    expect(calls, 1);
+    expect(
+      decoration(tester).color,
+      BrianThemeData.light.colors.background.neutralWeak,
+    );
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyA);
+    await tester.pump();
+    expect(calls, 2);
+    expect(
+      decoration(tester).color,
+      BrianThemeData.light.colors.background.neutralWeak,
+    );
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.enter);
+    await tester.pump();
+    expect(calls, 3);
+    expect(
+      decoration(tester).color,
+      BrianThemeData.light.colors.background.neutralWeakPressed,
+    );
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.enter);
+    await tester.pump();
+    expect(
+      decoration(tester).color,
+      BrianThemeData.light.colors.background.neutralWeak,
+    );
+  });
+
   testWidgets('닫기는 요청만 전달하고 보조 동작은 독립적으로 실행된다', (tester) async {
     var dismissed = 0;
     var action = 0;
