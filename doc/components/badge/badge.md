@@ -1,0 +1,50 @@
+# Badge
+
+`BrianBadge`는 항목의 분류, 처리 상태, 부가 정보를 표시하는 정적인 라벨입니다.
+상위에 `BrianTheme`을 두고 짧고 구체적인 문구를 사용합니다.
+
+```dart
+const BrianBadge(
+  label: '승인됨',
+  tone: BrianBadgeTone.positive,
+)
+```
+
+## 표현 선택
+
+| 속성 | 값 | 기본값 |
+| --- | --- | --- |
+| `tone` | neutral, brand, informative, positive, warning, critical | neutral |
+| `variant` | solid, outline, weak | weak |
+| `size` | medium, large | medium |
+| `maxWidth` | 패딩을 포함한 최대 너비(논리 픽셀) | 120 |
+
+`weak`는 반복되는 목록의 부가 정보에, `outline`은 상세 정보의 구분에,
+`solid`는 주목해야 할 안내에 사용합니다. `brand`는 핵심 안내에 제한해서 사용합니다.
+`informative`는 정보, `positive`는 완료, `warning`은 주의가 필요한 상태,
+`critical`은 오류를 나타냅니다. 색상만으로 의미를 전달하지 않습니다.
+
+## 크기와 긴 라벨
+
+기본 테마의 medium은 12픽셀 글자와 20픽셀 높이,
+large는 13픽셀 글자와 24픽셀 높이를 사용합니다.
+글자 확대나 테마의 타이포그래피 변경에 따라 높이가 늘어납니다.
+스타일을 바꿔도 테두리 때문에 크기가 달라지지 않습니다.
+
+라벨은 한 줄이며 너비를 넘으면 말줄임합니다. 글자 수가 아닌 실제 표시 너비로
+결정되므로 글꼴과 확대 설정에 따라 보이는 길이가 달라집니다.
+`maxWidth`를 늘리거나 `double.infinity`로 제한을 없앨 수 있지만 부모 제약이
+우선합니다. Row 안의 남은 공간을 사용하려면 `Flexible`로 감싸세요.
+여러 배지는 `Wrap`으로 배치해 좁은 화면에서 줄을 바꿉니다.
+
+## 테마와 접근성
+
+배경·전경·테두리는 `BrianTheme`의 역할 색상을 사용합니다.
+solid는 각 색상의 `on…Solid` 전경을, weak와 outline은 neutral 또는
+각 의미 색상의 `…Contrast` 전경을 사용합니다. outline은 배경이 투명하므로
+실제 배경과의 대비를 확인해야 합니다. 사용자 정의 테마에서도 조합을 검토하세요.
+
+화면에서 말줄임한 경우에도 접근성 트리에는 전체 라벨을 한 번 전달합니다.
+버튼 역할, 탭 동작, 키보드 포커스는 제공하지 않습니다.
+조작이 필요하면 `BrianButton`을 사용합니다. 상태 변화의 즉시 낭독이 필요하면
+호출하는 화면에서 `Semantics(liveRegion: true)`로 알림 범위를 정합니다.
