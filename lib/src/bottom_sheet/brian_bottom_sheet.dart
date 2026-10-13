@@ -214,8 +214,8 @@ class _BrianBottomSheetState extends State<BrianBottomSheet>
         animation: _offset,
         builder: (context, child) =>
             Transform.translate(offset: Offset(0, _offset.value), child: child),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 640),
+        child: SizedBox(
+          width: 640,
           child: Semantics(
             scopesRoute: true,
             explicitChildNodes: true,

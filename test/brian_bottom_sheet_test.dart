@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 Future<void> openSheet(
   WidgetTester tester, {
+  WidgetBuilder? builder,
   bool long = false,
   bool handle = true,
   bool drag = true,
@@ -35,19 +36,21 @@ Future<void> openSheet(
                         child: const Text('고정 푸터'),
                       )
                     : null,
-                builder: (context) => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('시트 제목'),
-                    if (long)
-                      for (var i = 0; i < 40; i++)
-                        SizedBox(height: 60, child: Text('항목 $i')),
-                    BrianButton(
-                      onPressed: () => Navigator.of(context).pop('선택'),
-                      child: const Text('선택'),
+                builder:
+                    builder ??
+                    (context) => Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text('시트 제목'),
+                        if (long)
+                          for (var i = 0; i < 40; i++)
+                            SizedBox(height: 60, child: Text('항목 $i')),
+                        BrianButton(
+                          onPressed: () => Navigator.of(context).pop('선택'),
+                          child: const Text('선택'),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
               );
               result?.call(value);
             },
@@ -67,6 +70,31 @@ Finder get scroll => find.descendant(
 );
 
 void main() {
+  for (final width in [390.0, 800.0]) {
+    for (final slots in [false, true]) {
+      testWidgets('짧은 콘텐츠와 고정 영역 $slots: 화면 너비 $width에서 가용 너비를 채운다', (
+        tester,
+      ) async {
+        tester.view.physicalSize = Size(width, 600);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        await openSheet(
+          tester,
+          handle: false,
+          slots: slots,
+          builder: (_) => const Text('내용'),
+        );
+        final rect = tester.getRect(find.byType(BrianBottomSheet));
+        expect(rect.width, width < 640 ? width : 640);
+        expect(rect.center.dx, width / 2);
+        expect(rect.bottom, 600);
+        expect(rect.height, lessThan(300));
+        expect(tester.takeException(), isNull);
+      });
+    }
+  }
+
   for (final handle in [true, false]) {
     testWidgets('핸들 $handle: 본문 드래그로 닫기', (tester) async {
       await openSheet(tester, handle: handle);
