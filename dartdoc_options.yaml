@@ -12,6 +12,9 @@ dartdoc:
     Radius:
       markdown: doc/foundations/radius/radius.md
       displayName: 모서리
+    Spacing:
+      markdown: doc/foundations/spacing/spacing.md
+      displayName: 간격
     Theme:
       markdown: doc/theming/overview.md
       displayName: 테마
@@ -27,6 +30,7 @@ dartdoc:
     - Typography
     - Elevation
     - Radius
+    - Spacing
     - Theme
     - ColorReference
     - Contrast
