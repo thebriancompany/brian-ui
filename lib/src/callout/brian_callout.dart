@@ -226,6 +226,12 @@ class _BrianCalloutState extends State<BrianCallout> {
                     event.logicalKey == LogicalKeyboardKey.space)) {
               _setPressed(false);
             }
+            // 반복 입력이 상위 앱의 기본 shortcut으로 전파되지 않게 합니다.
+            if (event is KeyRepeatEvent &&
+                (event.logicalKey == LogicalKeyboardKey.enter ||
+                    event.logicalKey == LogicalKeyboardKey.space)) {
+              return KeyEventResult.handled;
+            }
             return KeyEventResult.ignored;
           },
           child: FocusableActionDetector(

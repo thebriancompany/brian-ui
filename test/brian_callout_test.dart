@@ -119,6 +119,44 @@ void main() {
     semantics.dispose();
   });
 
+  testWidgets('상위 단축키가 있어도 Enter·Space를 길게 누르면 한 번만 실행한다', (tester) async {
+    var calls = 0;
+    final focus = FocusNode();
+    addTearDown(focus.dispose);
+    await tester.pumpWidget(
+      host(
+        Shortcuts(
+          shortcuts: const {
+            SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
+            SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
+          },
+          child: BrianCallout(
+            description: const Text('배송 확인'),
+            focusNode: focus,
+            onPressed: () => calls++,
+          ),
+        ),
+      ),
+    );
+    focus.requestFocus();
+    await tester.pump();
+    for (final key in [LogicalKeyboardKey.enter, LogicalKeyboardKey.space]) {
+      final before = calls;
+      await tester.sendKeyDownEvent(key);
+      await tester.sendKeyRepeatEvent(key);
+      await tester.sendKeyRepeatEvent(key);
+      await tester.sendKeyUpEvent(key);
+      await tester.pump();
+      expect(calls, before + 1, reason: key.keyLabel);
+      expect(
+        decoration(tester).color,
+        BrianThemeData.light.colors.background.neutralWeak,
+      );
+      await tester.sendKeyEvent(key);
+      expect(calls, before + 2, reason: '키를 놓고 다시 누르면 실행');
+    }
+  });
+
   testWidgets('닫기는 요청만 전달하고 보조 동작은 독립적으로 실행된다', (tester) async {
     var dismissed = 0;
     var action = 0;
