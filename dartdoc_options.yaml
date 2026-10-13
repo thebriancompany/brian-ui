@@ -39,6 +39,9 @@ dartdoc:
     Callout:
       markdown: doc/components/callout/callout.md
       displayName: 콜아웃
+    Divider:
+      markdown: doc/components/divider/divider.md
+      displayName: 구분선
     ColorReference:
       markdown: doc/foundations/color/color_reference.md
       displayName: 색상값
@@ -60,5 +63,6 @@ dartdoc:
     - AlertDialog
     - Badge
     - Callout
+    - Divider
     - ColorReference
     - Contrast
