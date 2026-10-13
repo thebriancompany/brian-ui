@@ -1,4 +1,8 @@
-# brian-ui
+![Brian Design System](doc/assets/cover.webp)
+
+![개발 중인 Brian Design System](doc/assets/wip.png)
+
+# Brian Design System
 
 Flutter 기본 위젯 계층으로 구성하는 독립 디자인 시스템입니다.
 패키지 이름은 `brian_ui`이며, 색상·타이포그래피·그림자·모서리·간격·테마와 버튼·아코디언·알림 다이얼로그를 제공합니다.
