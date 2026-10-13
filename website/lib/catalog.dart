@@ -111,6 +111,13 @@ const pages = [
     source: 'doc/components/callout/callout.md',
   ),
   DocPage(
+    '/components/checkbox',
+    'Checkbox',
+    'COMPONENTS',
+    '여러 항목의 선택과 동의를 명확하게 표현하는 입력.',
+    source: 'doc/components/checkbox/checkbox.md',
+  ),
+  DocPage(
     '/foundations/color-reference',
     '전체 색상값',
     'REFERENCE',
