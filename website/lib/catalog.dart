@@ -69,6 +69,13 @@ const pages = [
     source: 'doc/components/button/button.md',
   ),
   DocPage(
+    '/components/accordion',
+    'Accordion',
+    'COMPONENTS',
+    '관련 정보를 필요한 만큼 접고 펼치는 목록.',
+    source: 'doc/components/accordion/accordion.md',
+  ),
+  DocPage(
     '/foundations/color-reference',
     '전체 색상값',
     'REFERENCE',
