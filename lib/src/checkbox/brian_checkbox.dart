@@ -57,6 +57,10 @@ class BrianCheckbox extends StatefulWidget {
 class _BrianCheckboxState extends State<BrianCheckbox> {
   bool _pressed = false;
   bool _focusHighlight = false;
+  FocusNode? _internalFocusNode;
+
+  FocusNode get _focusNode =>
+      widget.focusNode ?? (_internalFocusNode ??= FocusNode());
 
   bool get _enabled => widget.onChanged != null;
 
@@ -66,6 +70,12 @@ class _BrianCheckboxState extends State<BrianCheckbox> {
 
   void _activate() {
     widget.onChanged?.call(widget.value != true);
+  }
+
+  @override
+  void dispose() {
+    _internalFocusNode?.dispose();
+    super.dispose();
   }
 
   @override
@@ -104,17 +114,24 @@ class _BrianCheckboxState extends State<BrianCheckbox> {
                     event.logicalKey != LogicalKeyboardKey.enter)) {
               return KeyEventResult.ignored;
             }
+            // 누르는 도중 보조키가 추가되어도 키를 놓으면 눌림을 해제합니다.
+            if (event is KeyUpEvent) _setPressed(false);
+            final keyboard = HardwareKeyboard.instance;
+            if (keyboard.isControlPressed ||
+                keyboard.isAltPressed ||
+                keyboard.isShiftPressed ||
+                keyboard.isMetaPressed) {
+              return KeyEventResult.ignored;
+            }
             if (event is KeyDownEvent) {
               _setPressed(true);
               _activate();
-            } else if (event is KeyUpEvent) {
-              _setPressed(false);
             }
             return KeyEventResult.handled;
           },
           child: FocusableActionDetector(
             enabled: _enabled,
-            focusNode: widget.focusNode,
+            focusNode: _focusNode,
             autofocus: widget.autofocus,
             mouseCursor: _enabled
                 ? SystemMouseCursors.click
@@ -127,7 +144,12 @@ class _BrianCheckboxState extends State<BrianCheckbox> {
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               excludeFromSemantics: true,
-              onTap: _enabled ? _activate : null,
+              onTap: _enabled
+                  ? () {
+                      _focusNode.requestFocus();
+                      _activate();
+                    }
+                  : null,
               onTapDown: _enabled ? (_) => _setPressed(true) : null,
               onTapUp: _enabled ? (_) => _setPressed(false) : null,
               onTapCancel: _enabled ? () => _setPressed(false) : null,

@@ -26,6 +26,113 @@ Widget host(
 );
 
 void main() {
+  testWidgets('클릭한 체크박스로 포커스를 옮겨 이후 키 입력을 전달한다', (tester) async {
+    for (final externalFocus in [false, true]) {
+      final firstFocus = FocusNode();
+      final secondFocus = FocusNode();
+      addTearDown(firstFocus.dispose);
+      addTearDown(secondFocus.dispose);
+      final calls = <String>[];
+      await tester.pumpWidget(
+        host(
+          Column(
+            children: [
+              BrianCheckbox(
+                value: false,
+                focusNode: firstFocus,
+                onChanged: (_) => calls.add('첫 번째'),
+                label: const Text('첫 번째'),
+              ),
+              BrianCheckbox(
+                value: false,
+                focusNode: externalFocus ? secondFocus : null,
+                onChanged: (_) => calls.add('두 번째'),
+                label: const Text('두 번째'),
+              ),
+              const BrianCheckbox(
+                value: false,
+                onChanged: null,
+                label: Text('비활성'),
+              ),
+            ],
+          ),
+        ),
+      );
+      firstFocus.requestFocus();
+      await tester.pump();
+      await tester.tapAt(tester.getCenter(find.text('두 번째')));
+      await tester.pump();
+      expect(firstFocus.hasFocus, isFalse);
+      if (externalFocus) expect(secondFocus.hasFocus, isTrue);
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      expect(calls, ['두 번째', '두 번째', '두 번째']);
+      await tester.tapAt(tester.getCenter(find.text('비활성')));
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      expect(calls, ['두 번째', '두 번째', '두 번째', '두 번째']);
+    }
+  });
+
+  testWidgets('보조키 조합은 선택을 바꾸지 않고 상위 단축키에 전달한다', (tester) async {
+    final focus = FocusNode();
+    addTearDown(focus.dispose);
+    var calls = 0;
+    var shortcuts = 0;
+    for (final modifier in [
+      LogicalKeyboardKey.controlLeft,
+      LogicalKeyboardKey.altLeft,
+      LogicalKeyboardKey.shiftLeft,
+      LogicalKeyboardKey.metaLeft,
+    ]) {
+      for (final key in [LogicalKeyboardKey.space, LogicalKeyboardKey.enter]) {
+        await tester.pumpWidget(
+          host(
+            CallbackShortcuts(
+              bindings: {
+                SingleActivator(
+                  key,
+                  control: modifier == LogicalKeyboardKey.controlLeft,
+                  alt: modifier == LogicalKeyboardKey.altLeft,
+                  shift: modifier == LogicalKeyboardKey.shiftLeft,
+                  meta: modifier == LogicalKeyboardKey.metaLeft,
+                  includeRepeats: false,
+                ): () =>
+                    shortcuts++,
+              },
+              child: BrianCheckbox(
+                value: false,
+                onChanged: (_) => calls++,
+                focusNode: focus,
+                label: const Text('선택'),
+              ),
+            ),
+          ),
+        );
+        focus.requestFocus();
+        await tester.pump();
+        final before = shortcuts;
+        await tester.sendKeyDownEvent(modifier);
+        await tester.sendKeyDownEvent(key);
+        await tester.sendKeyRepeatEvent(key);
+        await tester.sendKeyUpEvent(key);
+        await tester.sendKeyUpEvent(modifier);
+        expect(calls, 0);
+        expect(shortcuts, before + 1);
+      }
+    }
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.space);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.space);
+    await tester.pump();
+    expect(
+      tester.widget<BrianCheckmark>(find.byType(BrianCheckmark)).pressed,
+      isFalse,
+    );
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    expect(calls, 1);
+  });
+
   testWidgets('라벨과 행 여백이 새 값을 요청하며 값은 부모가 관리한다', (tester) async {
     for (final value in <bool?>[false, true, null]) {
       final changes = <bool>[];
