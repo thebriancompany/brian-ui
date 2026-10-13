@@ -3,6 +3,9 @@ dartdoc:
     Color:
       markdown: doc/foundations/color/color.md
       displayName: 색상
+    Typography:
+      markdown: doc/foundations/typography/typography.md
+      displayName: 타이포그래피
     Theme:
       markdown: doc/theming/overview.md
       displayName: 테마
@@ -15,6 +18,7 @@ dartdoc:
   showUndocumentedCategories: true
   categoryOrder:
     - Color
+    - Typography
     - Theme
     - ColorReference
     - Contrast

@@ -1,4 +1,4 @@
-/// Brian UI의 독립적인 색상·테마 시스템입니다.
+/// Brian UI의 독립적인 색상·타이포그래피·테마 시스템입니다.
 ///
 /// [BrianTheme]으로 테마를 제공하고 `BrianTheme.of(context).colors`로
 /// 역할 색상을 읽습니다. 일반 콘텐츠는 팔레트 값보다 역할 색상을 우선합니다.
@@ -19,3 +19,7 @@ export 'src/color/brian_static_colors.dart';
 export 'src/color/brian_stroke_colors.dart';
 export 'src/theme/brian_theme.dart';
 export 'src/theme/brian_theme_data.dart';
+export 'src/typography/brian_font_size.dart';
+export 'src/typography/brian_font_weight.dart';
+export 'src/typography/brian_line_height.dart';
+export 'src/typography/brian_typography.dart';
