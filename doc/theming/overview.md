@@ -1,19 +1,50 @@
 # 테마
 
-테마는 색상·타이포그래피·그림자 등 디자인 설정을 묶어 앱이나 특정 영역에 적용하는 체계입니다.
-각 기반 값의 의미와 사용 기준은 `foundations/`에서, 설정의 조합과 전달은
-이 문서에서 다룹니다. 현재 구현은 색상·타이포그래피·그림자를 제공합니다.
+Brian UI의 테마는 색상·타이포그래피·그림자를 한곳에서 조합합니다.
+컴포넌트는 `BrianTheme`에서 값을 읽으므로 테마를 바꾸면 같은 구현으로
+라이트·다크와 사용자 정의 스타일을 표현할 수 있습니다.
 
-Brian UI는 Flutter의 `painting`, `foundation`, `widgets` 계층을 사용합니다.
-색상·타이포그래피·그림자 모델은 불변 데이터이며 `BrianTheme`은 `InheritedTheme`으로 데이터를
-공급합니다. `ThemeData`, `ColorScheme`, `ThemeExtension`에 의존하지 않습니다.
+일반 화면에서는 고정 색상보다 `background.layerDefault`, `foreground.neutral`
+같은 **역할 토큰**을 먼저 선택하세요. 값의 이름이 사용 의도를 설명하고,
+테마가 해당 모드에 맞는 실제 색상을 결정합니다.
 
-## 앱 연결
+## 역할 토큰으로 시작하기
+
+배경과 그 위에 표시하는 전경을 함께 선택합니다. 다음 조합은 일반 콘텐츠의
+기본 표면과 본문에 사용합니다.
+
+```dart title="lib/content.dart" highlight="2-3"
+final colors = BrianTheme.of(context).colors;
+final background = colors.background.layerDefault;
+final foreground = colors.foreground.neutral;
+
+return ColoredBox(
+  color: background,
+  child: Text(
+    'Brian UI',
+    style: TextStyle(color: foreground),
+  ),
+);
+```
+
+| 사용 위치 | 배경 | 전경 |
+| --- | --- | --- |
+| 일반 콘텐츠 | `background.layerDefault` | `foreground.neutral` |
+| 보조 표면 | `background.neutralWeak` | `foreground.neutral` |
+| 중립 강조 액션 | `background.neutralSolid` | `foreground.onNeutralSolid` |
+| 브랜드 강조 액션 | `background.brandSolid` | `foreground.onBrandSolid` |
+
+기본 브랜드는 파란색 계열이며, 라이트는 흰색 전경, 다크는 검은색 전경을
+사용합니다. 기본 상태의 대비는 각각 약 5.92:1, 7.76:1입니다. 사용자 정의
+브랜드에서는 전경·배경과 눌림 상태를 함께 검증하세요.
+측정값은 `doc/foundations/color/color_contrast.md`에서 확인합니다.
+
+## 앱에 테마 연결
 
 `WidgetsApp`의 `builder` 아래에 `BrianTheme`을 배치합니다.
 시스템 모드를 따르려면 다음처럼 밝기를 구독합니다.
 
-```dart
+```dart title="lib/app.dart" highlight="2-4"
 builder: (context, child) => BrianTheme(
   data: BrianThemeData.forBrightness(
     MediaQuery.platformBrightnessOf(context),
@@ -26,28 +57,22 @@ builder: (context, child) => BrianTheme(
 `BrianThemeData.light` 또는 `dark`를 전달합니다. 테마는 설정을 저장하지 않습니다.
 테마 데이터가 바뀌면 `BrianTheme.of(context)`를 호출한 위젯이 다시 빌드됩니다.
 
-```dart
-final colors = BrianTheme.of(context).colors;
-final background = colors.background.layerDefault;
-final foreground = colors.foreground.neutral;
-```
-
 테마를 생성하는 위치의 context는 그 아래에 있는 테마를 볼 수 없습니다.
 `Builder` 또는 별도 자식 위젯 안에서 읽어야 합니다. 테마가 없는 경우
 `of`는 설명이 포함된 `FlutterError`를 던지고 `maybeOf`는 null을 반환합니다.
 
-## 사용자 정의
+## 역할 색상 사용자 정의
 
 한 역할만 바꾸려면 해당 그룹을 복사합니다. 배경과 전경, 눌림 상태의 대비를
 함께 확인하고, 라이트·다크 테마를 각각 준비합니다.
 
-```dart
+```dart title="lib/theme.dart" highlight="5-7"
 final base = BrianThemeData.light;
 final colors = base.colors;
 final custom = base.copyWith(
   colors: colors.copyWith(
     foreground: colors.foreground.copyWith(
-      onBrandSolid: BrianStaticColors.black,
+      neutral: colors.palette.gray.step900,
     ),
   ),
 );
@@ -56,7 +81,7 @@ final custom = base.copyWith(
 전체 브랜드 계열은 `brandScale`로 교체하며, 일반 색상명 팔레트는 보존합니다.
 아래 예제의 보라색도 새로운 배경·전경 조합이므로 대비 검증은 별도로 필요합니다.
 
-```dart
+```dart title="lib/brand_theme.dart" highlight="5"
 final palette = BrianPalette.light;
 final colors = BrianColors.fromPalette(
   palette: palette,
@@ -140,3 +165,16 @@ final content = InheritedTheme.captureAll(
 
 테마는 데이터를 전달합니다. 일반 `Text`나 `Icon`의 스타일을 자동으로
 덮어쓰지 않으므로 위젯에 텍스트 스타일과 역할 색상을 명시해야 합니다.
+
+
+## 적용 후 확인하기
+
+- 라이트·다크에서 기본·눌림·비활성화 상태의 배경과 전경을 함께 확인합니다.
+- `BrianTheme.of(context)`는 테마 아래의 context에서 호출합니다.
+- 지역 테마 밖에 표시되는 오버레이에는 필요한 테마를 명시적으로 전달합니다.
+- 팔레트 교체와 역할 색상 재계산은 구분합니다. `copyWith`는 기존 역할을 유지합니다.
+
+테마 모델은 불변 값이며 `BrianTheme`은 `InheritedTheme`으로 데이터를 전달합니다.
+핵심 패키지는 Flutter 기본 계층을 사용하며 Material의 `ThemeData`, `ColorScheme`,
+`ThemeExtension`에 의존하지 않습니다. 기반 값의 선택 기준은 `doc/foundations/`에서,
+생성자·속성의 정확한 계약은 API 참조에서 확인하세요.

@@ -26,8 +26,8 @@ BrianButton(
 | ghost | 배경 없는 보조 액션 | transparent / neutral |
 
 일반 버튼과 아이콘 버튼의 기본값은 neutralSolid입니다. 브랜드 강조가 필요한
-액션에만 brandSolid를 명시하며, 기본 테마에서는 라이트·다크 모두 주황색 배경과
-흰색 전경을 유지합니다. 두 outline 모두 `stroke.neutralMuted`를 사용합니다.
+액션에만 brandSolid를 명시하며, 기본 테마에서는 파란색 배경에
+라이트는 흰색, 다크는 검은색 전경을 사용합니다. 두 outline 모두 `stroke.neutralMuted`를 사용합니다.
 누르거나 포인터를 올리면 해당 배경의 Pressed 색상을 사용합니다.
 비활성화 시 전경은 `foreground.disabled`, solid·weak 배경은
 `background.disabled`이며 outline·ghost는 투명 배경을 유지합니다.
@@ -95,9 +95,9 @@ live region으로 제공하며 기본 설명은 '처리 중'입니다. 다국어
 주변 간격과 플랫폼별 터치 영역 요구를 함께 검토합니다. 사용자 정의 테마와
 outline·ghost의 실제 합성 배경에서는 전경 대비를 별도로 확인해야 합니다.
 기본 neutralSolid는 라이트·다크의 기본·눌림 상태에서 전경 대비가 4.5:1 이상입니다.
-brandSolid의 흰색 전경은 기본 배경에서 약 2.94:1로 이 기준에 미달합니다.
-4.5:1 충족이 필요한 액션에는 neutralSolid를 사용하거나 브랜드의 전경·배경과
-눌림 상태를 함께 사용자 정의합니다. 전체 측정값은
+기본 brandSolid도 두 모드의 기본·눌림 상태에서 4.5:1 이상입니다.
+브랜드 색상을 사용자 정의하면 전경·배경과 눌림 상태를 함께 검증합니다.
+전체 측정값은
 `doc/foundations/color/color_contrast.md`에서 확인합니다.
 포커스 링은 기본 layer 표면에서 3:1 이상이며, 다른 인접 배경에서는 다시 검증합니다.
 자동 테스트는 상태·입력·semantics·글자 확대를 검사하며 스크린 리더의 실제

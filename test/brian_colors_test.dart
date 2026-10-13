@@ -10,8 +10,8 @@ void main() {
     expect(dark.palette.gray.step0, const Color(0xFF000000));
     expect(dark.palette.gray.step100, const Color(0xFF16171B));
     expect(dark.palette.orange.step600, const Color(0xFFE65200));
-    expect(light.foreground.brand, const Color(0xFFFF6600));
-    expect(dark.foreground.brand, const Color(0xFFFF6600));
+    expect(light.foreground.brand, const Color(0xFF135FCD));
+    expect(dark.foreground.brand, const Color(0xFF41A2F9));
     expect(dark.background.positiveSolid, const Color(0xFF117956));
     expect(dark.foreground.positive, const Color(0xFF22B27F));
     expect(dark.background.warningSolid, const Color(0xFFDAB156));
@@ -60,13 +60,16 @@ void main() {
       );
       expect(colors.palette, same(palette));
       expect(colors.palette.orange, base.palette.orange);
-      expect(colors.foreground.brand, isDark ? brand.step700 : brand.step600);
-      expect(colors.foreground.brandContrast, brand.step700);
+      expect(colors.foreground.brand, isDark ? brand.step700 : brand.step800);
+      expect(
+        colors.foreground.brandContrast,
+        isDark ? brand.step700 : brand.step800,
+      );
       expect(colors.foreground.onBrandSolid, base.foreground.onBrandSolid);
       expect(colors.background.brandSolid, colors.foreground.brand);
       expect(
         colors.background.brandSolidPressed,
-        isDark ? brand.step800 : brand.step700,
+        isDark ? brand.step800 : brand.step900,
       );
       expect(colors.background.brandWeak, brand.step100);
       expect(colors.background.brandWeakPressed, brand.step200);
@@ -176,25 +179,23 @@ void main() {
       }
     });
 
-    test('${colors.brightness.name}: 흰색 브랜드 전경의 대비 제한과 대안을 기록한다', () {
+    test('${colors.brightness.name}: 브랜드 기본·눌림·약한 배경은 4.5:1 이상이다', () {
+      final fg = colors.foreground;
       final bg = colors.background;
-      expect(colors.foreground.onBrandSolid, BrianStaticColors.white);
       expect(
-        _contrast(colors.foreground.onBrandSolid, bg.brandSolid),
-        closeTo(2.94, 0.01),
+        fg.onBrandSolid,
+        colors.brightness == Brightness.dark
+            ? BrianStaticColors.black
+            : BrianStaticColors.white,
       );
-      expect(
-        _contrast(colors.foreground.onBrandSolid, bg.brandSolidPressed),
-        closeTo(colors.brightness == Brightness.light ? 3.99 : 2.03, 0.01),
-      );
-      expect(
-        _contrast(BrianStaticColors.black, bg.brandSolid),
-        greaterThanOrEqualTo(4.5),
-      );
-      expect(
-        _contrast(BrianStaticColors.black, bg.brandSolidPressed),
-        greaterThanOrEqualTo(4.5),
-      );
+      for (final pair in [
+        (fg.onBrandSolid, bg.brandSolid),
+        (fg.onBrandSolid, bg.brandSolidPressed),
+        (fg.brandContrast, bg.brandWeak),
+        (fg.brandContrast, bg.brandWeakPressed),
+      ]) {
+        expect(_contrast(pair.$1, pair.$2), greaterThanOrEqualTo(4.5));
+      }
     });
   }
 

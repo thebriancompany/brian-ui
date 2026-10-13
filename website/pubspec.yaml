@@ -1,0 +1,36 @@
+name: brian_ui_website
+description: Brian UI 사용 가이드와 컴포넌트 플레이그라운드.
+publish_to: none
+version: 1.0.0
+
+environment:
+  sdk: ^3.13.1
+  flutter: ">=3.47.1"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  brian_ui:
+    path: ../
+  flutter_markdown_plus: ^1.0.12
+  web: ^1.1.1
+  highlight: ^0.7.0
+  markdown: ^7.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  # 문서 선택 메뉴의 기본 아이콘용이며 Brian UI 패키지에는 적용하지 않습니다.
+  # TODO(brian-ui): 선택 메뉴·아이콘을 제공하면 플랫폼 기본 표현을 교체합니다.
+  uses-material-design: true
+  assets:
+    - assets/guides/
+    - lib/examples/getting_started.dart
+    - assets/fonts/OFL.txt
+  fonts:
+    - family: BrianCode
+      fonts:
+        - asset: assets/fonts/JetBrainsMono-Regular.ttf
