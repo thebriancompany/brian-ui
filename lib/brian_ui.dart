@@ -1,4 +1,21 @@
-/// Brian UI 디자인 시스템의 공개 진입점.
+/// Brian UI의 독립적인 색상·테마 시스템입니다.
 ///
-/// 토큰, 테마, 컴포넌트를 구현한 뒤 이 라이브러리에서 export합니다.
+/// [BrianTheme]으로 테마를 제공하고 `BrianTheme.of(context).colors`로
+/// 역할 색상을 읽습니다. 일반 콘텐츠는 팔레트 값보다 역할 색상을 우선합니다.
+/// 라이트·다크 설정, 대비 제한, 사용자 정의 방법은 패키지 색상 가이드를
+/// 참고하세요. API 주석은 `dart doc`으로 HTML 문서를 생성할 수 있습니다.
+///
+/// {@category ColorReference}
+/// {@category Contrast}
 library;
+
+export 'src/color/brian_banner_colors.dart';
+export 'src/color/brian_background_colors.dart';
+export 'src/color/brian_color_scale.dart';
+export 'src/color/brian_colors.dart';
+export 'src/color/brian_foreground_colors.dart';
+export 'src/color/brian_palette.dart';
+export 'src/color/brian_static_colors.dart';
+export 'src/color/brian_stroke_colors.dart';
+export 'src/theme/brian_theme.dart';
+export 'src/theme/brian_theme_data.dart';
