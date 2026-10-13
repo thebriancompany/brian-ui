@@ -12,6 +12,8 @@ Brian UI는 Flutter 기본 위젯 계층으로 만드는 독립 디자인 시스
 ## 컴포넌트
 
 - [Divider 사용 가이드](https://github.com/thebriancompany/brian-ui/blob/develop/doc/components/divider/divider.md) — 섹션·목록·가로 배치의 시각적 경계
+- [Scroll Fog 사용 가이드](https://github.com/thebriancompany/brian-ui/blob/develop/doc/components/scroll_fog/scroll_fog.md) — 스크롤 경계 그라디언트
+
 - [Badge 사용 가이드](https://github.com/thebriancompany/brian-ui/blob/develop/doc/components/badge/badge.md) — 상태·분류·부가 정보 라벨
 
 ## 디렉터리

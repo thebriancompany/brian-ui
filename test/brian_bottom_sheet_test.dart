@@ -70,6 +70,34 @@ Finder get scroll => find.descendant(
 );
 
 void main() {
+  for (final long in [false, true]) {
+    testWidgets('푸터 Fog는 짧은 본문과 스크롤 끝에서도 마지막 항목을 가리지 않는다: $long', (
+      tester,
+    ) async {
+      await openSheet(tester, long: long, slots: true);
+      expect(find.byType(BrianScrollFog), findsOneWidget);
+      final position = tester.state<ScrollableState>(scroll).position;
+      final footer = tester.getRect(find.text('고정 푸터'));
+      position.jumpTo(position.maxScrollExtent);
+      await tester.pumpAndSettle();
+      final fog = tester.getRect(find.byType(BrianScrollFog));
+      expect(
+        tester.getRect(find.text('선택')).bottom,
+        lessThanOrEqualTo(fog.top),
+      );
+      expect(fog.bottom, lessThanOrEqualTo(footer.top));
+      expect(tester.getRect(find.text('고정 푸터')), footer);
+      await tester.tap(find.text('선택'));
+      await tester.pumpAndSettle();
+      expect(find.byType(BrianBottomSheet), findsNothing);
+    });
+  }
+
+  testWidgets('푸터가 없으면 Fog를 추가하지 않는다', (tester) async {
+    await openSheet(tester, long: true);
+    expect(find.byType(BrianScrollFog), findsNothing);
+  });
+
   for (final width in [390.0, 800.0]) {
     for (final slots in [false, true]) {
       testWidgets('짧은 콘텐츠와 고정 영역 $slots: 화면 너비 $width에서 가용 너비를 채운다', (

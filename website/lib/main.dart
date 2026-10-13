@@ -13,6 +13,7 @@ import 'button_playground.dart';
 import 'button_group_examples.dart';
 import 'callout_examples.dart';
 import 'divider_examples.dart';
+import 'scroll_fog_examples.dart';
 import 'catalog.dart';
 import 'foundation_preview.dart';
 import 'guide.dart';
@@ -229,6 +230,8 @@ class _DocsShellState extends State<DocsShell> {
                         const ButtonGroupExamples(),
                       if (page.path == '/components/button')
                         const ButtonPlayground(),
+                      if (page.path == '/components/scroll-fog')
+                        const ScrollFogExamples(),
                       if (page.path == '/components/callout')
                         const CalloutExamples(),
                       if (page.path == '/components/divider')

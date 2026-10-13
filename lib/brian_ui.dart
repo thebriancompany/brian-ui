@@ -34,3 +34,4 @@ export 'src/typography/brian_font_weight.dart';
 export 'src/typography/brian_line_height.dart';
 export 'src/typography/brian_typography.dart';
 export 'src/badge/brian_badge.dart';
+export 'src/scroll_fog/brian_scroll_fog.dart';
