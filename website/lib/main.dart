@@ -2,6 +2,7 @@ import 'package:brian_ui/brian_ui.dart';
 import 'package:flutter/material.dart'
     show MaterialApp, MaterialPage, ThemeData, ThemeMode;
 import 'package:flutter/widgets.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 import 'browser.dart';
 import 'button_playground.dart';
@@ -365,9 +366,19 @@ class _Navigation extends StatelessWidget {
   }
 }
 
-class _Overview extends StatelessWidget {
+class _Overview extends StatefulWidget {
   const _Overview({required this.onNavigate});
   final ValueChanged<String> onNavigate;
+
+  @override
+  State<_Overview> createState() => _OverviewState();
+}
+
+class _OverviewState extends State<_Overview> {
+  // 분석·실행 테스트를 받는 Dart 파일을 그대로 표시해 예제와 구현의 차이를 막습니다.
+  late final _source = rootBundle.loadString(
+    'lib/examples/getting_started.dart',
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -391,11 +402,11 @@ class _Overview extends StatelessWidget {
                 runSpacing: BrianSpacing.x3,
                 children: [
                   BrianButton(
-                    onPressed: () => onNavigate('/components/button'),
+                    onPressed: () => widget.onNavigate('/components/button'),
                     child: const Text('Button 체험하기 →'),
                   ),
                   BrianButton(
-                    onPressed: () => onNavigate('/foundations/color'),
+                    onPressed: () => widget.onNavigate('/foundations/color'),
                     variant: BrianButtonVariant.neutralOutline,
                     child: const Text('기반 값 살펴보기'),
                   ),
@@ -418,35 +429,23 @@ class _Overview extends StatelessWidget {
           'BrianTheme을 상위에 제공하고 공개 진입점에서 컴포넌트를 가져옵니다. 아래는 앱에서 실행할 수 있는 최소 예제입니다.',
         ),
         const SizedBox(height: BrianSpacing.x4),
-        const CodeExample('''import 'package:brian_ui/brian_ui.dart';
-import 'package:flutter/widgets.dart';
-
-void main() {
-  runApp(WidgetsApp(
-    color: BrianStaticColors.white,
-    builder: (context, child) {
-        final brightness = _brightness ?? MediaQuery.platformBrightnessOf(context);
-        final data = BrianThemeData.forBrightness(brightness);
-        return BrianTheme(
-      data: BrianThemeData.forBrightness(
-        MediaQuery.platformBrightnessOf(context),
-      ),
-      child: Center(
-        child: BrianButton(
-          onPressed: () {},
-          child: const Text('시작하기'),
+        FutureBuilder<String>(
+          future: _source,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Text('예제를 불러오지 못했습니다. 페이지를 새로고침해 주세요.');
+            }
+            if (!snapshot.hasData) return const Text('예제를 불러오고 있습니다.');
+            return CodeExample(snapshot.data!, filename: 'lib/main.dart');
+          },
         ),
-      ),
-    ),
-  ));
-}'''),
         const SectionHeading('문서를 읽는 순서'),
         const Text(
           '기반 값에서 선택 기준을 확인하고, 테마 가이드에서 앱에 연결하세요. 컴포넌트 페이지에서는 실제 상태와 사용법을, API 참조에서는 생성자·속성·타입의 정확한 계약을 확인할 수 있습니다.',
         ),
         const SizedBox(height: BrianSpacing.x5),
         BrianButton(
-          onPressed: () => onNavigate('/contributing/website'),
+          onPressed: () => widget.onNavigate('/contributing/website'),
           variant: BrianButtonVariant.neutralWeak,
           child: const Text('컴포넌트 개발과 웹 배포 →'),
         ),

@@ -29,6 +29,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/guides/
+    - lib/examples/getting_started.dart
     - assets/fonts/OFL.txt
   fonts:
     - family: BrianCode

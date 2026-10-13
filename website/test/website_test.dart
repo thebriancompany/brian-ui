@@ -18,6 +18,9 @@ Future<void> openPage(
   addTearDown(tester.view.resetDevicePixelRatio);
   addTearDown(tester.binding.platformDispatcher.clearDefaultRouteNameTestValue);
   await tester.runAsync(() async {
+    if (path == '/') {
+      await rootBundle.loadString('lib/examples/getting_started.dart');
+    }
     final asset = pageForPath(path)?.asset;
     if (asset != null) {
       rootBundle.evict(asset);
@@ -42,6 +45,17 @@ Future<void> tapButton(WidgetTester tester, String label) async {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  testWidgets('시작 페이지는 실행 테스트를 받는 예제 원문을 표시한다', (tester) async {
+    await openPage(tester, '/');
+    final source = await tester.runAsync(
+      () => rootBundle.loadString('lib/examples/getting_started.dart'),
+    );
+    final example = tester
+        .widgetList<CodeExample>(find.byType(CodeExample))
+        .singleWhere((block) => block.filename == 'lib/main.dart');
+    expect(example.code, source);
+  });
 
   testWidgets('버튼 상태와 복사 코드가 실제 BrianButton에 함께 반영된다', (tester) async {
     await openPage(tester, '/components/button');
