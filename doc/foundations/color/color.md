@@ -29,6 +29,7 @@ Brian UI는 색상값과 사용 목적을 분리합니다. 화면을 만들 때�
 
 라이트에서는 기본·떠 있는 표면이 같아도 다크에서는 다르게 구분됩니다.
 레이어 색상은 그림자나 실제 위젯의 z 순서를 변경하지 않습니다.
+표면색·그림자·경계색의 조합 기준은 `doc/foundations/elevation/elevation.md`에 정리합니다.
 
 `Pressed`는 누르는 동안, `Selected`는 선택 상태, `SelectedPressed`는
 선택된 항목을 누르는 동안 사용합니다. `disabled`와 `placeholder`는 각각

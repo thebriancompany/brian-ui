@@ -6,6 +6,9 @@ dartdoc:
     Typography:
       markdown: doc/foundations/typography/typography.md
       displayName: 타이포그래피
+    Elevation:
+      markdown: doc/foundations/elevation/elevation.md
+      displayName: 고도
     Theme:
       markdown: doc/theming/overview.md
       displayName: 테마
@@ -19,6 +22,7 @@ dartdoc:
   categoryOrder:
     - Color
     - Typography
+    - Elevation
     - Theme
     - ColorReference
     - Contrast
