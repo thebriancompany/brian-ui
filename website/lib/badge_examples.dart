@@ -54,9 +54,51 @@ class BadgeExamples extends StatelessWidget {
       const _BadgeExample(
         heading: '처리 상태',
         explanation: '완료·대기·문제 상태는 색상과 구체적인 문구를 함께 사용합니다.',
-        code: """const BrianBadge(label: '승인됨', tone: BrianBadgeTone.positive)
-const BrianBadge(label: '만료 임박', tone: BrianBadgeTone.warning)
-const BrianBadge(label: '보완 필요', tone: BrianBadgeTone.critical)""",
+        code: """const Column(
+  children: [
+    SizedBox(
+      width: double.infinity,
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 16,
+        runSpacing: 8,
+        children: [
+          Text('프로필 검토'),
+          BrianBadge(label: '승인됨', tone: BrianBadgeTone.positive),
+        ],
+      ),
+    ),
+    SizedBox(height: 16),
+    SizedBox(
+      width: double.infinity,
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 16,
+        runSpacing: 8,
+        children: [
+          Text('이용권 갱신'),
+          BrianBadge(label: '만료 임박', tone: BrianBadgeTone.warning),
+        ],
+      ),
+    ),
+    SizedBox(height: 16),
+    SizedBox(
+      width: double.infinity,
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 16,
+        runSpacing: 8,
+        children: [
+          Text('서류 제출'),
+          BrianBadge(label: '보완 필요', tone: BrianBadgeTone.critical),
+        ],
+      ),
+    ),
+  ],
+)""",
         child: Column(
           children: [
             _StatusRow(
