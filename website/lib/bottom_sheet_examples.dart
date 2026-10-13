@@ -30,8 +30,7 @@ class BottomSheetExamples extends StatelessWidget {
       ),
       _SheetExample(
         title: '긴 콘텐츠',
-        description:
-            '제목과 닫기 버튼은 고정되고 목록만 스크롤됩니다. 목록이 맨 위에 도달한 뒤 아래로 더 끌면 시트가 따라옵니다.',
+        description: '제목과 닫기 버튼은 고정되고 목록은 하단 Fog 아래로 스크롤됩니다. 끝까지 내려 마지막 항목의 여백을 확인하세요. 맨 위에서 아래로 더 끌면 시트가 따라옵니다.',
         long: true,
       ),
       _SheetExample(
