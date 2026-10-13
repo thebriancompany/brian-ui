@@ -91,14 +91,8 @@ class _BrianAlertDialogState<T> extends State<BrianAlertDialog<T>> {
       return;
     }
     if (!mounted) return;
-    if (ModalRoute.of(context)?.isCurrent == false) {
-      setState(() => _pending = null);
-      return;
-    }
     widget.onSelected(action.value);
-    if (mounted && ModalRoute.of(context)?.isCurrent != false) {
-      setState(() => _pending = null);
-    }
+    if (mounted) setState(() => _pending = null);
   }
 
   @override
@@ -155,6 +149,7 @@ class _BrianAlertDialogState<T> extends State<BrianAlertDialog<T>> {
 ///
 /// [context]의 [BrianTheme]을 표시할 라우트에 전달하고 선택한 액션의 값을
 /// 반환합니다. 바깥 터치·시스템 뒤로가기·Esc로는 닫히지 않습니다.
+/// 다른 라우트에 가려진 동안 선택이 완료되어도 이 다이얼로그만 닫습니다.
 /// 앱이 직접 라우트를 제거하거나 pop하면 null이 반환될 수 있습니다.
 /// [useRootNavigator]가 true이면 최상위 Navigator에 표시합니다.
 /// 상태 복원은 지원하지 않습니다.
@@ -186,6 +181,13 @@ Future<T?> showBrianAlertDialog<T>({
       pageBuilder: (routeContext, animation, secondaryAnimation) {
         final media = MediaQuery.of(routeContext);
         final verticalInset = math.max(media.padding.top, media.padding.bottom);
+        final availableHeight =
+            media.size.height - media.viewInsets.vertical - verticalInset * 2;
+        // 짧은 화면에서는 고정 여백보다 스크롤할 본문 영역을 우선합니다.
+        final verticalSpacing = ((availableHeight - 128) / 2).clamp(
+          0.0,
+          BrianSpacing.x16,
+        );
         return themes.wrap(
           PopScope<T>(
             canPop: false,
@@ -198,9 +200,9 @@ Future<T?> showBrianAlertDialog<T>({
                     media.viewInsets +
                     EdgeInsets.fromLTRB(
                       media.padding.left + BrianSpacing.x8,
-                      verticalInset + BrianSpacing.x16,
+                      verticalInset + verticalSpacing,
                       media.padding.right + BrianSpacing.x8,
-                      verticalInset + BrianSpacing.x16,
+                      verticalInset + verticalSpacing,
                     ),
                 child: Center(
                   child: BrianAlertDialog<T>(
@@ -210,9 +212,14 @@ Future<T?> showBrianAlertDialog<T>({
                     secondaryAction: secondaryAction,
                     onSelected: (value) {
                       // 종료 애니메이션 중 중복 입력이 아래 라우트를 닫지 않게 합니다.
-                      if (selected) return;
+                      final route = ModalRoute.of<T>(routeContext)!;
+                      if (selected || !route.isActive) return;
                       selected = true;
-                      navigator.pop<T>(value);
+                      if (route.isCurrent) {
+                        navigator.pop<T>(value);
+                      } else {
+                        navigator.removeRoute<T>(route, value);
+                      }
                     },
                   ),
                 ),

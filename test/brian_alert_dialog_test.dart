@@ -312,6 +312,143 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('가려진 다이얼로그의 작업이 완료되면 해당 라우트만 결과와 함께 닫는다', (tester) async {
+    final work = Completer<void>();
+    bool? result;
+    await tester.pumpWidget(
+      routeHost(
+        primary: BrianAlertDialogAction(
+          label: '확인',
+          value: true,
+          onPressed: () => work.future,
+        ),
+        onResult: (value) => result = value,
+      ),
+    );
+    await tester.tap(find.text('열기'));
+    await tester.pumpAndSettle();
+    final navigator = Navigator.of(
+      tester.element(find.byType(BrianAlertDialog<bool>)),
+    );
+    await tester.tap(find.text('확인'));
+    await tester.pump();
+    final cover = PageRouteBuilder<void>(
+      pageBuilder: (_, _, _) => const Text('다른 화면'),
+    );
+    navigator.push(cover);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    work.complete();
+    await tester.pumpAndSettle();
+    expect(result, isTrue);
+    expect(cover.isCurrent, isTrue);
+    expect(find.text('다른 화면'), findsOneWidget);
+    navigator.pop();
+    await tester.pumpAndSettle();
+    expect(find.text('열기'), findsOneWidget);
+    expect(find.byType(BrianAlertDialog<bool>), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('본문을 직접 사용하면 가려진 라우트에서도 비동기 선택을 전달한다', (tester) async {
+    final work = Completer<void>();
+    var selections = 0;
+    await tester.pumpWidget(
+      WidgetsApp(
+        color: const Color(0xFFFFFFFF),
+        onGenerateRoute: (_) => PageRouteBuilder<void>(
+          pageBuilder: (_, _, _) => BrianTheme(
+            data: BrianThemeData.light,
+            child: Center(
+              child: BrianAlertDialog<bool>(
+                description: '처리 중',
+                primaryAction: BrianAlertDialogAction(
+                  label: '확인',
+                  value: true,
+                  onPressed: () => work.future,
+                ),
+                onSelected: (value) {
+                  expect(value, isTrue);
+                  selections++;
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    final navigator = Navigator.of(
+      tester.element(find.byType(BrianAlertDialog<bool>)),
+    );
+    await tester.tap(find.text('확인'));
+    await tester.pump();
+    navigator.push(
+      PageRouteBuilder<void>(pageBuilder: (_, _, _) => const Text('다른 화면')),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    work.complete();
+    await tester.pumpAndSettle();
+    expect(selections, 1);
+    navigator.pop();
+    await tester.pumpAndSettle();
+    expect(tester.widget<BrianButton>(buttons).isLoading, isFalse);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('이미 pop한 다이얼로그의 작업 완료는 아래 라우트를 닫지 않는다', (tester) async {
+    final work = Completer<void>();
+    var results = 0;
+    await tester.pumpWidget(
+      routeHost(
+        primary: BrianAlertDialogAction(
+          label: '확인',
+          value: true,
+          onPressed: () => work.future,
+        ),
+        onResult: (value) {
+          expect(value, isNull);
+          results++;
+        },
+      ),
+    );
+    await tester.tap(find.text('열기'));
+    await tester.pumpAndSettle();
+    final context = tester.element(find.byType(BrianAlertDialog<bool>));
+    await tester.tap(find.text('확인'));
+    await tester.pump();
+    Navigator.of(context).pop();
+    // 종료 애니메이션 중에는 본문이 아직 mounted일 수 있습니다.
+    work.complete();
+    await tester.pumpAndSettle();
+    expect(results, 1);
+    expect(find.text('열기'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('가로 화면에 키보드가 열려 있어도 내용을 스크롤하고 선택할 수 있다', (tester) async {
+    tester.view.physicalSize = const Size(640, 360);
+    tester.view.devicePixelRatio = 1;
+    tester.view.viewInsets = const FakeViewPadding(bottom: 250);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetViewInsets);
+    await tester.pumpWidget(
+      routeHost(description: List.filled(25, '긴 설명입니다.').join('\n')),
+    );
+    await tester.tap(find.text('열기'));
+    await tester.pumpAndSettle();
+    final viewport = tester.getRect(find.byType(SingleChildScrollView));
+    expect(viewport.height, greaterThan(0));
+    expect(viewport.top, greaterThanOrEqualTo(0));
+    expect(viewport.bottom, lessThanOrEqualTo(110));
+    await tester.scrollUntilVisible(find.text('확인'), 100);
+    await tester.tap(find.text('확인'));
+    await tester.pumpAndSettle();
+    expect(find.byType(BrianAlertDialog<bool>), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('지역 테마를 라우트로 전달하고 긴 내용은 작은 화면에서 스크롤한다', (tester) async {
     tester.view.physicalSize = const Size(320, 400);
     tester.view.devicePixelRatio = 1;
