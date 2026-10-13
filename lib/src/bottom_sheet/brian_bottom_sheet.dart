@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import '../radius/brian_radius.dart';
+import '../scroll_fog/brian_scroll_fog.dart';
 import '../spacing/brian_spacing.dart';
 import '../theme/brian_theme.dart';
 
@@ -110,6 +111,8 @@ Future<T?> showBrianBottomSheet<T>({
 ///
 /// 유한한 높이 제약 안에 배치하세요. [header]·[footer]는 고정하고 [child]만
 /// 스크롤합니다. [child]는 별도 세로 스크롤 없이 구성합니다.
+/// [footer]가 있으면 본문 하단에 80px ScrollFog와 같은 깊이의 스크롤
+/// 패딩을 제공합니다. Fog는 끝에서도 유지되며 패딩이 마지막 내용을 보호합니다.
 /// 고정 영역은 화면에 들어가는 간결한 콘텐츠로 구성하세요.
 /// 헤더·푸터·여백에서의 드래그는 본문이 최상단일 때만 시트를 움직입니다.
 /// [onDismiss]가 없으면 드래그로 움직이지 않습니다. 핸들은 시각적 단서입니다.
@@ -298,24 +301,40 @@ class _BrianBottomSheetState extends State<BrianBottomSheet>
                               const SizedBox(height: BrianSpacing.x5),
                             ],
                             Flexible(
-                              child: ScrollConfiguration(
-                                behavior: const ScrollBehavior().copyWith(
-                                  dragDevices: PointerDeviceKind.values.toSet(),
-                                  overscroll: false,
-                                  scrollbars: false,
-                                ),
-                                child: SingleChildScrollView(
-                                  dragStartBehavior: DragStartBehavior.down,
-                                  controller: _scroll,
-                                  physics: const AlwaysScrollableScrollPhysics(
-                                    parent: ClampingScrollPhysics(),
+                              child: Stack(
+                                fit: StackFit.passthrough,
+                                children: [
+                                  ScrollConfiguration(
+                                    behavior: const ScrollBehavior().copyWith(
+                                      dragDevices: PointerDeviceKind.values
+                                          .toSet(),
+                                      overscroll: false,
+                                      scrollbars: false,
+                                    ),
+                                    child: SingleChildScrollView(
+                                      dragStartBehavior: DragStartBehavior.down,
+                                      controller: _scroll,
+                                      physics:
+                                          const AlwaysScrollableScrollPhysics(
+                                            parent: ClampingScrollPhysics(),
+                                          ),
+                                      padding: widget.footer == null
+                                          ? EdgeInsets.zero
+                                          : const EdgeInsets.only(bottom: 80),
+                                      child: widget.child,
+                                    ),
                                   ),
-                                  child: widget.child,
-                                ),
+                                  if (widget.footer != null)
+                                    const Positioned.fill(
+                                      child: Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: BrianScrollFog(),
+                                      ),
+                                    ),
+                                ],
                               ),
                             ),
                             if (widget.footer != null) ...[
-                              const SizedBox(height: BrianSpacing.x5),
                               Semantics(
                                 container: true,
                                 explicitChildNodes: true,
