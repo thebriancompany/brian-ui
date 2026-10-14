@@ -402,6 +402,76 @@ void main() {
     await mouse.removePointer();
   });
 
+  for (final direction in [TextDirection.ltr, TextDirection.rtl]) {
+    for (final count in [2, 12]) {
+      testWidgets('하단 팝업은 실제 높이로 배치하고 수평 호버 경로를 유지한다 ($direction, $count)', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          host(
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: SizedBox(
+                height: 64,
+                child: BrianSideNavigation(
+                  collapsed: true,
+                  onSelected: (_) {},
+                  groups: [
+                    BrianSideNavigationGroup(
+                      items: [
+                        BrianSideNavigationItem(
+                          value: 'parent',
+                          label: '하단 메뉴',
+                          children: [
+                            for (var i = 0; i < count; i++)
+                              BrianSideNavigationItem(
+                                value: 'child-$i',
+                                label: '하위 메뉴 $i',
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            direction: direction,
+          ),
+        );
+        await tester.pumpAndSettle();
+        final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+        await mouse.addPointer(location: Offset.zero);
+        final anchor = tester.getCenter(button('하단 메뉴'));
+        await mouse.moveTo(anchor);
+        await tester.pumpAndSettle();
+        final popup = find.byWidgetPredicate(
+          (w) =>
+              w is Container &&
+              w.decoration is BoxDecoration &&
+              (w.decoration! as BoxDecoration).boxShadow != null,
+        );
+        final rect = tester.getRect(popup);
+        expect(rect.top, greaterThanOrEqualTo(8));
+        expect(rect.bottom, lessThanOrEqualTo(592));
+        expect(rect.top, lessThan(anchor.dy));
+        expect(rect.bottom, greaterThan(anchor.dy));
+        expect(rect.height, lessThanOrEqualTo(320));
+        if (count == 2) expect(rect.height, lessThan(320));
+        await mouse.moveTo(
+          Offset(
+            direction == TextDirection.ltr ? rect.left + 4 : rect.right - 4,
+            anchor.dy,
+          ),
+        );
+        await tester.pump(const Duration(milliseconds: 200));
+        expect(popup, findsOneWidget);
+        await mouse.removePointer();
+        await tester.pumpAndSettle();
+      });
+    }
+  }
+
   testWidgets('문서의 상위 스크롤이 움직이면 열린 팝업을 닫는다', (tester) async {
     final controller = ScrollController();
     addTearDown(controller.dispose);

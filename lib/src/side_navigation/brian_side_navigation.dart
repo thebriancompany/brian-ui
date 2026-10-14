@@ -783,75 +783,75 @@ class _CollapsedItemState extends State<_CollapsedItem> {
                 ? offset.dx - width - BrianSpacing.x4
                 : offset.dx + box.size.width + BrianSpacing.x4)
             .clamp(8.0, math.max(8.0, overlay.size.width - width - 8));
-    final top = offset.dy.clamp(
-      8.0,
-      math.max(8.0, overlay.size.height - height - 8),
-    );
     final theme = BrianTheme.of(context);
     final enabledChildren = widget.item.children.where(
       (child) => child.enabled,
     );
-    return Positioned(
-      left: left.toDouble(),
-      top: top.toDouble(),
-      width: width,
-      child: TapRegion(
-        groupId: this,
-        child: MouseRegion(
-          onEnter: (_) => _closeTimer?.cancel(),
-          onExit: (_) => _scheduleClose(),
-          child: FocusScope(
-            onFocusChange: (focused) {
-              if (!focused && _keyboard) _close();
-            },
-            child: Focus(
-              autofocus: _keyboard && enabledChildren.isEmpty,
-              skipTraversal: true,
-              onKeyEvent: (_, event) {
-                if (event is KeyDownEvent &&
-                    event.logicalKey == LogicalKeyboardKey.escape) {
-                  _close(restoreFocus: true);
-                  return KeyEventResult.handled;
-                }
-                return KeyEventResult.ignored;
+    return Positioned.fill(
+      child: CustomSingleChildLayout(
+        delegate: _PopupLayout(
+          anchor: Offset(left.toDouble(), offset.dy),
+          width: width,
+          maxHeight: height,
+        ),
+        child: TapRegion(
+          groupId: this,
+          child: MouseRegion(
+            onEnter: (_) => _closeTimer?.cancel(),
+            onExit: (_) => _scheduleClose(),
+            child: FocusScope(
+              onFocusChange: (focused) {
+                if (!focused && _keyboard) _close();
               },
-              child: Container(
-                constraints: BoxConstraints(maxHeight: height),
-                padding: const EdgeInsets.all(BrianSpacing.x2),
-                decoration: BoxDecoration(
-                  color: theme.colors.background.layerFloating,
-                  boxShadow: [theme.shadows.s3],
-                  borderRadius: BorderRadius.circular(BrianRadius.r3),
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(BrianSpacing.x2),
-                        child: Text(
-                          widget.item.label,
-                          style: theme.typography.t3Medium.copyWith(
-                            color: theme.colors.foreground.neutral,
+              child: Focus(
+                autofocus: _keyboard && enabledChildren.isEmpty,
+                skipTraversal: true,
+                onKeyEvent: (_, event) {
+                  if (event is KeyDownEvent &&
+                      event.logicalKey == LogicalKeyboardKey.escape) {
+                    _close(restoreFocus: true);
+                    return KeyEventResult.handled;
+                  }
+                  return KeyEventResult.ignored;
+                },
+                child: Container(
+                  constraints: BoxConstraints(maxHeight: height),
+                  padding: const EdgeInsets.all(BrianSpacing.x2),
+                  decoration: BoxDecoration(
+                    color: theme.colors.background.layerFloating,
+                    boxShadow: [theme.shadows.s3],
+                    borderRadius: BorderRadius.circular(BrianRadius.r3),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(BrianSpacing.x2),
+                          child: Text(
+                            widget.item.label,
+                            style: theme.typography.t3Medium.copyWith(
+                              color: theme.colors.foreground.neutral,
+                            ),
                           ),
                         ),
-                      ),
-                      for (final child in widget.item.children)
-                        _NavigationRow(
-                          key: ValueKey(child.value),
-                          item: child,
-                          selected: child.value == widget.selectedValue,
-                          autofocus:
-                              _keyboard &&
-                              enabledChildren.isNotEmpty &&
-                              child == enabledChildren.first,
-                          onPressed: () {
-                            _close(restoreFocus: true);
-                            widget.onSelected(child.value);
-                          },
-                        ),
-                    ],
+                        for (final child in widget.item.children)
+                          _NavigationRow(
+                            key: ValueKey(child.value),
+                            item: child,
+                            selected: child.value == widget.selectedValue,
+                            autofocus:
+                                _keyboard &&
+                                enabledChildren.isNotEmpty &&
+                                child == enabledChildren.first,
+                            onPressed: () {
+                              _close(restoreFocus: true);
+                              widget.onSelected(child.value);
+                            },
+                          ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -861,6 +861,35 @@ class _CollapsedItemState extends State<_CollapsedItem> {
       ),
     );
   }
+}
+
+class _PopupLayout extends SingleChildLayoutDelegate {
+  const _PopupLayout({
+    required this.anchor,
+    required this.width,
+    required this.maxHeight,
+  });
+
+  final Offset anchor;
+  final double width;
+  final double maxHeight;
+
+  @override
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) =>
+      BoxConstraints(minWidth: width, maxWidth: width, maxHeight: maxHeight);
+
+  @override
+  Offset getPositionForChild(Size size, Size childSize) => Offset(
+    anchor.dx,
+    // 실제 레이아웃 높이로 보정해 짧은 팝업도 트리거 옆에 유지합니다.
+    anchor.dy.clamp(8.0, math.max(8.0, size.height - childSize.height - 8)),
+  );
+
+  @override
+  bool shouldRelayout(_PopupLayout oldDelegate) =>
+      anchor != oldDelegate.anchor ||
+      width != oldDelegate.width ||
+      maxHeight != oldDelegate.maxHeight;
 }
 
 class _NavigationGlyph extends StatelessWidget {
