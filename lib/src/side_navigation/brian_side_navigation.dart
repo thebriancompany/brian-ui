@@ -433,6 +433,7 @@ class _BrianSideNavigationState extends State<BrianSideNavigation> {
                       children: [
                         for (final child in item.children)
                           Padding(
+                            key: ValueKey(child.value),
                             padding: const EdgeInsetsDirectional.only(
                               start: BrianSpacing.x5,
                               top: BrianSpacing.x1,
@@ -455,6 +456,7 @@ class _BrianSideNavigationState extends State<BrianSideNavigation> {
 
 class _NavigationRow extends StatelessWidget {
   const _NavigationRow({
+    super.key,
     required this.item,
     required this.selected,
     required this.onPressed,
@@ -837,6 +839,7 @@ class _CollapsedItemState extends State<_CollapsedItem> {
                       ),
                       for (final child in widget.item.children)
                         _NavigationRow(
+                          key: ValueKey(child.value),
                           item: child,
                           selected: child.value == widget.selectedValue,
                           autofocus:

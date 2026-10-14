@@ -241,6 +241,66 @@ void main() {
     });
   }
 
+  for (final collapsed in [false, true]) {
+    testWidgets('하위 메뉴 재정렬 후에도 같은 항목에 포커스와 실행 대상을 유지한다 ($collapsed)', (
+      tester,
+    ) async {
+      var children = const [
+        BrianSideNavigationItem(value: 'active', label: '진행 중'),
+        BrianSideNavigationItem(value: 'archive', label: '보관함'),
+      ];
+      late StateSetter update;
+      final calls = <String>[];
+      await tester.pumpWidget(
+        host(
+          StatefulBuilder(
+            builder: (context, setState) {
+              update = setState;
+              return BrianSideNavigation(
+                collapsed: collapsed,
+                initialExpandedValues: const {'project'},
+                onSelected: calls.add,
+                groups: [
+                  BrianSideNavigationGroup(
+                    items: [
+                      BrianSideNavigationItem(
+                        value: 'project',
+                        label: '프로젝트',
+                        children: children,
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      if (collapsed) {
+        await tester.tap(button('프로젝트'));
+        await tester.pumpAndSettle();
+      }
+      final originalFocus = Focus.of(tester.element(find.text('진행 중')));
+      originalFocus.requestFocus();
+      await tester.pump();
+      expect(originalFocus.hasFocus, isTrue);
+      update(
+        () => children = [
+          children.last,
+          const BrianSideNavigationItem(value: 'active', label: '현재 작업'),
+        ],
+      );
+      await tester.pumpAndSettle();
+      expect(Focus.of(tester.element(find.text('현재 작업'))), same(originalFocus));
+      expect(originalFocus.hasFocus, isTrue);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(calls, ['active']);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('접힌 부모는 키보드로 열고 Escape로 포커스를 복원한다', (tester) async {
     final calls = <String>[];
     await tester.pumpWidget(
