@@ -15,6 +15,7 @@ export 'src/bottom_sheet/brian_bottom_sheet.dart';
 export 'src/button/brian_button.dart';
 export 'src/button_group/brian_button_group.dart';
 export 'src/callout/brian_callout.dart';
+export 'src/checkbox/brian_checkbox.dart';
 export 'src/chip/brian_chip.dart';
 export 'src/color/brian_banner_colors.dart';
 export 'src/color/brian_background_colors.dart';

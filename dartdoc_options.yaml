@@ -39,6 +39,9 @@ dartdoc:
     Callout:
       markdown: doc/components/callout/callout.md
       displayName: 콜아웃
+    Checkbox:
+      markdown: doc/components/checkbox/checkbox.md
+      displayName: 체크박스
     Chip:
       markdown: doc/components/chip/chip.md
       displayName: 칩
@@ -69,6 +72,7 @@ dartdoc:
     - AlertDialog
     - Badge
     - Callout
+    - Checkbox
     - Chip
     - Divider
     - ScrollFog
