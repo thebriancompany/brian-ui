@@ -27,6 +27,8 @@ export 'src/color/brian_static_colors.dart';
 export 'src/color/brian_stroke_colors.dart';
 export 'src/divider/brian_divider.dart';
 export 'src/elevation/brian_shadows.dart';
+export 'src/field/brian_field.dart';
+export 'src/text_input/brian_text_input.dart';
 export 'src/radius/brian_radius.dart';
 export 'src/spacing/brian_spacing.dart';
 export 'src/theme/brian_theme.dart';
