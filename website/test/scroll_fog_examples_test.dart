@@ -1,5 +1,6 @@
 import 'package:brian_ui/brian_ui.dart';
 import 'package:flutter/widgets.dart';
+import 'package:brian_ui_website/scroll_fog_examples.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'website_test.dart' show openPage, tapButton;
@@ -8,8 +9,12 @@ void main() {
   for (final width in [390.0, 1280.0]) {
     testWidgets('ScrollFog 사례와 고정 액션을 조작한다: $width', (tester) async {
       await openPage(tester, '/components/scroll-fog', size: Size(width, 900));
-      expect(find.byType(BrianScrollFog), findsNWidgets(7));
-      final fog = find.byType(BrianScrollFog).first;
+      final exampleFogs = find.descendant(
+        of: find.byType(ScrollFogExamples),
+        matching: find.byType(BrianScrollFog),
+      );
+      expect(exampleFogs, findsNWidgets(7));
+      final fog = exampleFogs.first;
       await tester.ensureVisible(fog);
       await tester.pumpAndSettle();
       final view = find

@@ -51,8 +51,17 @@ void main() {
   testWidgets('모바일에서 모든 사례와 다크 모드를 표시한다', (tester) async {
     await openPage(tester, '/components/checkbox', size: const Size(390, 844));
     expect(find.byType(BrianCheckbox), findsNWidgets(18));
+    await tapButton(tester, '메뉴 · Checkbox');
+    await tester.pumpAndSettle();
     await tapButton(tester, '다크 모드');
     await tester.pumpAndSettle();
+    await tapButton(tester, '메뉴 닫기');
+    await tester.pumpAndSettle();
+    expect(
+      BrianTheme.of(tester.element(find.byType(BrianCheckbox).first))
+          .brightness,
+      Brightness.dark,
+    );
     final last = find.text('변경할 수 없는 선택 항목');
     await tester.ensureVisible(last);
     await tester.pumpAndSettle();

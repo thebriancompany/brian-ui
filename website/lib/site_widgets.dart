@@ -3,50 +3,29 @@ import 'package:flutter/widgets.dart';
 
 export 'code_example.dart';
 
-class SiteHeader extends StatelessWidget {
-  const SiteHeader({super.key, required this.onBrightnessChanged});
-  final ValueChanged<Brightness> onBrightnessChanged;
+class SiteServiceName extends StatelessWidget {
+  const SiteServiceName({super.key});
 
   @override
   Widget build(BuildContext context) {
     final theme = BrianTheme.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: BrianSpacing.x6,
-        vertical: BrianSpacing.x4,
-      ),
-      child: Wrap(
-        alignment: WrapAlignment.spaceBetween,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: BrianSpacing.x6,
-        runSpacing: BrianSpacing.x3,
-        children: [
-          Text.rich(
-            TextSpan(
-              children: [
-                const TextSpan(text: 'Brian'),
-                TextSpan(
-                  text: ' UI',
-                  style: TextStyle(color: theme.colors.foreground.brand),
-                ),
-              ],
-            ),
-            style: theme.typography.t8Bold,
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: BrianSpacing.x3,
+          vertical: BrianSpacing.x2,
+        ),
+        decoration: BoxDecoration(
+          color: theme.colors.background.neutralWeak,
+          borderRadius: BorderRadius.circular(BrianRadius.r2),
+        ),
+        child: Text(
+          'Brian UI',
+          style: theme.typography.t3Medium.copyWith(
+            color: theme.colors.foreground.neutral,
           ),
-          Text('문서 · develop', style: theme.typography.t2Regular),
-          BrianButton(
-            onPressed: () => onBrightnessChanged(
-              theme.brightness == Brightness.light
-                  ? Brightness.dark
-                  : Brightness.light,
-            ),
-            variant: BrianButtonVariant.neutralWeak,
-            size: BrianButtonSize.small,
-            child: Text(
-              theme.brightness == Brightness.light ? '다크 모드' : '라이트 모드',
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:brian_ui/brian_ui.dart';
 import 'package:flutter/material.dart'
-    show MaterialApp, MaterialPage, ThemeData, ThemeMode;
+    show Icons, MaterialApp, MaterialPage, ThemeData, ThemeMode;
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
@@ -16,6 +16,7 @@ import 'checkbox_examples.dart';
 import 'chip_examples.dart';
 import 'divider_examples.dart';
 import 'scroll_fog_examples.dart';
+import 'side_navigation_examples.dart';
 import 'catalog.dart';
 import 'foundation_preview.dart';
 import 'guide.dart';
@@ -158,6 +159,7 @@ class DocsShell extends StatefulWidget {
 
 class _DocsShellState extends State<DocsShell> {
   bool _menuOpen = false;
+  bool? _navigationCollapsed;
 
   void _navigate(String path) {
     setState(() => _menuOpen = false);
@@ -232,6 +234,8 @@ class _DocsShellState extends State<DocsShell> {
                         const ButtonGroupExamples(),
                       if (page.path == '/components/button')
                         const ButtonPlayground(),
+                      if (page.path == '/components/side-navigation')
+                        const SideNavigationExamples(),
                       if (page.path == '/components/scroll-fog')
                         const ScrollFogExamples(),
                       if (page.path == '/components/callout')
@@ -276,121 +280,157 @@ class _DocsShellState extends State<DocsShell> {
     return Title(
       title: '${page?.title ?? '페이지 없음'} · Brian UI',
       color: theme.colors.background.layerDefault,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          SiteHeader(onBrightnessChanged: widget.onBrightnessChanged),
-          Container(height: 1, color: theme.colors.stroke.neutralWeak),
-          Expanded(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                if (constraints.maxWidth >= 1000) {
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 244,
-                        child: _Navigation(
-                          path: widget.path,
-                          onNavigate: _navigate,
-                        ),
-                      ),
-                      Container(
-                        width: 1,
-                        color: theme.colors.stroke.neutralWeak,
-                      ),
-                      Expanded(child: content),
-                    ],
-                  );
-                }
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: BrianSpacing.x6,
-                        vertical: BrianSpacing.x3,
-                      ),
-                      child: BrianButton(
-                        onPressed: () => setState(() => _menuOpen = !_menuOpen),
-                        variant: BrianButtonVariant.neutralWeak,
-                        child: Text(
-                          _menuOpen
-                              ? '메뉴 닫기'
-                              : '메뉴 · ${page?.title ?? '페이지 없음'}',
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: _menuOpen
-                          ? _Navigation(
-                              path: widget.path,
-                              onNavigate: _navigate,
-                            )
-                          : content,
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-        ],
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth >= 768) {
+            final collapsed =
+                _navigationCollapsed ?? constraints.maxWidth < 1000;
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _Navigation(
+                  collapsed: collapsed,
+                  onCollapsedChanged: (value) =>
+                      setState(() => _navigationCollapsed = value),
+                  path: widget.path,
+                  onBrightnessChanged: widget.onBrightnessChanged,
+                  onNavigate: _navigate,
+                ),
+                Container(width: 1, color: theme.colors.stroke.neutralWeak),
+                Expanded(child: content),
+              ],
+            );
+          }
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: BrianSpacing.x6,
+                  vertical: BrianSpacing.x3,
+                ),
+                child: BrianButton(
+                  onPressed: () => setState(() => _menuOpen = !_menuOpen),
+                  variant: BrianButtonVariant.neutralWeak,
+                  child: Text(
+                    _menuOpen ? '메뉴 닫기' : '메뉴 · ${page?.title ?? '페이지 없음'}',
+                  ),
+                ),
+              ),
+              Expanded(
+                child: _menuOpen
+                    ? _Navigation(
+                        path: widget.path,
+                        onBrightnessChanged: widget.onBrightnessChanged,
+                        onNavigate: _navigate,
+                      )
+                    : content,
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 }
 
 class _Navigation extends StatelessWidget {
-  const _Navigation({required this.path, required this.onNavigate});
+  const _Navigation({
+    required this.path,
+    required this.onNavigate,
+    required this.onBrightnessChanged,
+    this.collapsed = false,
+    this.onCollapsedChanged,
+  });
   final String path;
   final ValueChanged<String> onNavigate;
+  final ValueChanged<Brightness> onBrightnessChanged;
+  final bool collapsed;
+  final ValueChanged<bool>? onCollapsedChanged;
 
   @override
   Widget build(BuildContext context) {
     final theme = BrianTheme.of(context);
-    return ListView(
-      padding: const EdgeInsets.all(BrianSpacing.x5),
-      children: [
-        for (final group in pages.map((page) => page.group).toSet()) ...[
-          Padding(
-            padding: const EdgeInsets.only(
-              top: BrianSpacing.x5,
-              bottom: BrianSpacing.x3,
-              left: BrianSpacing.x3,
-            ),
-            child: Text(
-              group,
-              style: theme.typography.t1Bold.copyWith(
-                color: theme.colors.foreground.neutralMuted,
-                letterSpacing: 1.4,
+    final dark = theme.brightness == Brightness.dark;
+    final themeLabel = dark ? '라이트 모드' : '다크 모드';
+    final themeIcon = dark
+        ? Icons.light_mode_outlined
+        : Icons.dark_mode_outlined;
+    void toggleTheme() =>
+        onBrightnessChanged(dark ? Brightness.light : Brightness.dark);
+    final groups = pages.map((page) => page.group).toSet();
+    return BrianSideNavigation(
+      collapsed: collapsed,
+      onCollapsedChanged: onCollapsedChanged,
+      width: 244,
+      variant: BrianSideNavigationVariant.transparent,
+      selectedValue: path,
+      initialExpandedValues: {for (final group in groups) 'group:$group'},
+      onSelected: onNavigate,
+      header: const SiteServiceName(),
+      groups: [
+        for (final group in groups)
+          BrianSideNavigationGroup(
+            label: group,
+            items: [
+              BrianSideNavigationItem(
+                value: 'group:$group',
+                label: group,
+                icon: Icon(switch (group) {
+                  'Overview' => Icons.home_outlined,
+                  'Foundations' => Icons.palette_outlined,
+                  'Guides' => Icons.menu_book_outlined,
+                  'Components' => Icons.widgets_outlined,
+                  'Reference' => Icons.description_outlined,
+                  _ => Icons.code,
+                }),
+                children: [
+                  for (final page in pages.where((page) => page.group == group))
+                    BrianSideNavigationItem(
+                      value: page.path,
+                      label: page.title,
+                    ),
+                ],
               ),
-            ),
+            ],
           ),
-          for (final page in pages.where((page) => page.group == group))
-            Padding(
-              padding: const EdgeInsets.only(bottom: BrianSpacing.x1),
-              child: Semantics(
-                selected: page.path == path,
-                child: BrianButton(
-                  onPressed: () => onNavigate(page.path),
-                  variant: page.path == path
-                      ? BrianButtonVariant.neutralWeak
-                      : BrianButtonVariant.ghost,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(page.title),
-                  ),
-                ),
-              ),
-            ),
-        ],
-        const SizedBox(height: BrianSpacing.x5),
-        BrianButton(
-          onPressed: () => openSiteLink('api/index.html'),
-          variant: BrianButtonVariant.neutralOutline,
-          child: const Text('API 참조 ↗'),
-        ),
       ],
+      collapsedFooter: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          BrianButton.icon(
+            onPressed: toggleTheme,
+            variant: BrianButtonVariant.ghost,
+            icon: Icon(themeIcon),
+            semanticLabel: themeLabel,
+          ),
+          const SizedBox(height: BrianSpacing.x2),
+          BrianButton.icon(
+            onPressed: () => openSiteLink('api/index.html'),
+            variant: BrianButtonVariant.ghost,
+            icon: const Icon(Icons.open_in_new),
+            semanticLabel: 'API 참조 열기',
+          ),
+        ],
+      ),
+      footer: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          BrianButton(
+            onPressed: toggleTheme,
+            variant: BrianButtonVariant.ghost,
+            leading: Icon(themeIcon),
+            child: Text(themeLabel),
+          ),
+          const SizedBox(height: BrianSpacing.x2),
+          BrianButton(
+            onPressed: () => openSiteLink('api/index.html'),
+            variant: BrianButtonVariant.neutralOutline,
+            child: const Text('API 참조 ↗'),
+          ),
+        ],
+      ),
     );
   }
 }
