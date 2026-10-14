@@ -39,7 +39,7 @@ class BrianTextInput extends StatelessWidget {
     this.keyboardType,
     this.textInputAction,
     this.inputFormatters,
-    this.autofillHints,
+    this.autofillHints = const <String>[],
     this.textCapitalization = TextCapitalization.none,
     this.autocorrect = true,
     this.contextMenuBuilder,
@@ -88,6 +88,7 @@ class BrianTextInput extends StatelessWidget {
 
   final List<TextInputFormatter>? inputFormatters;
 
+  /// 기본 빈 목록은 플랫폼 자동 완성에 참여하며, null은 자동 완성에서 제외합니다.
   final Iterable<String>? autofillHints;
 
   final TextCapitalization textCapitalization;
@@ -166,7 +167,7 @@ class BrianTextArea extends StatelessWidget {
     this.keyboardType,
     this.textInputAction,
     this.inputFormatters,
-    this.autofillHints,
+    this.autofillHints = const <String>[],
     this.textCapitalization = TextCapitalization.none,
     this.autocorrect = true,
     this.contextMenuBuilder,
@@ -212,6 +213,7 @@ class BrianTextArea extends StatelessWidget {
 
   final List<TextInputFormatter>? inputFormatters;
 
+  /// 기본 빈 목록은 플랫폼 자동 완성에 참여하며, null은 자동 완성에서 제외합니다.
   final Iterable<String>? autofillHints;
 
   final TextCapitalization textCapitalization;
@@ -442,7 +444,7 @@ class _BrianEditableState extends State<_BrianEditable>
               ),
             Semantics(
               label: widget.semanticLabel,
-              hint: widget.placeholder,
+              hint: _controller.text.isEmpty ? widget.placeholder : null,
               validationResult: widget.isInvalid
                   ? SemanticsValidationResult.invalid
                   : SemanticsValidationResult.none,

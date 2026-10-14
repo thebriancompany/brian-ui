@@ -39,6 +39,79 @@ BoxDecoration decoration(WidgetTester tester) =>
         as BoxDecoration;
 
 void main() {
+  for (final multiline in [false, true]) {
+    final component = multiline ? 'TextArea' : 'TextInput';
+    testWidgets('$component 자동 완성 기본 참여와 명시적 제외를 구분한다', (tester) async {
+      final inputs = multiline
+          ? <Widget>[
+              const BrianTextArea(),
+              const BrianTextArea(autofillHints: null),
+              const BrianTextArea(
+                autofillHints: [AutofillHints.fullStreetAddress],
+              ),
+            ]
+          : <Widget>[
+              const BrianTextInput(),
+              const BrianTextInput(autofillHints: null),
+              const BrianTextInput(
+                autofillHints: [AutofillHints.fullStreetAddress],
+              ),
+            ];
+      for (var index = 0; index < inputs.length; index++) {
+        await tester.pumpWidget(host(inputs[index]));
+        final state = tester.state<EditableTextState>(
+          find.byType(EditableText),
+        );
+        final configuration =
+            state.textInputConfiguration.autofillConfiguration;
+        expect(configuration.enabled, index != 1);
+        if (index != 1) {
+          expect(
+            configuration.autofillHints,
+            index == 0 ? <String>[] : [AutofillHints.fullStreetAddress],
+          );
+        }
+      }
+    });
+
+    testWidgets('$component placeholder 접근성 안내는 빈 값일 때만 제공한다', (tester) async {
+      final semantics = tester.ensureSemantics();
+      final controller = TextEditingController(text: '기존 값');
+      await tester.pumpWidget(
+        host(
+          multiline
+              ? BrianTextArea(
+                  controller: controller,
+                  semanticLabel: '주소',
+                  placeholder: '주소 입력',
+                )
+              : BrianTextInput(
+                  controller: controller,
+                  semanticLabel: '주소',
+                  placeholder: '주소 입력',
+                ),
+        ),
+      );
+      String hint() => tester
+          .getSemantics(find.byType(EditableText))
+          .getSemanticsData()
+          .hint;
+      expect(hint(), isEmpty);
+      controller.clear();
+      await tester.pump();
+      expect(hint(), '주소 입력');
+      await tester.enterText(find.byType(EditableText), '새 주소');
+      await tester.pump();
+      expect(hint(), isEmpty);
+      await tester.enterText(find.byType(EditableText), '');
+      await tester.pump();
+      expect(hint(), '주소 입력');
+      await tester.pumpWidget(const SizedBox());
+      controller.dispose();
+      semantics.dispose();
+    });
+  }
+
   testWidgets('입력과 지우기는 값을 통지하고 외부 변경은 통지하지 않는다', (tester) async {
     final controller = TextEditingController();
     final focus = FocusNode();
