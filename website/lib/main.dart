@@ -15,6 +15,8 @@ import 'callout_examples.dart';
 import 'checkbox_examples.dart';
 import 'chip_examples.dart';
 import 'divider_examples.dart';
+import 'field_examples.dart';
+import 'text_input_examples.dart';
 import 'scroll_fog_examples.dart';
 import 'side_navigation_examples.dart';
 import 'catalog.dart';
@@ -243,6 +245,12 @@ class _DocsShellState extends State<DocsShell> {
                       if (page.path == '/components/checkbox')
                         const CheckboxExamples(),
                       if (page.path == '/components/chip') const ChipExamples(),
+                      if (page.path == '/components/text-input')
+                        const TextInputExamples(),
+                      if (page.path == '/components/text-area')
+                        const TextAreaExamples(),
+                      if (page.path == '/components/field')
+                        const FieldExamples(),
                       if (page.path == '/components/divider')
                         const DividerExamples(),
                       FoundationPreview(path: page.path),

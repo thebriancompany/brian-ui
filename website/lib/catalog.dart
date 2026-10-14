@@ -132,11 +132,11 @@ const pages = [
     source: 'doc/components/divider/divider.md',
   ),
   DocPage(
-    '/components/side-navigation',
-    'Side Navigation',
+    '/components/field',
+    'Field',
     'Components',
-    '그룹과 하위 메뉴로 서비스의 페이지를 탐색하는 사이드바.',
-    source: 'doc/components/side_navigation/side_navigation.md',
+    '라벨과 입력, 도움말과 오류를 일관되게 묶는 필드.',
+    source: 'doc/components/field/field.md',
   ),
   DocPage(
     '/components/scroll-fog',
@@ -144,6 +144,27 @@ const pages = [
     'Components',
     '스크롤 경계에서 콘텐츠를 부드럽게 연결하는 그라디언트.',
     source: 'doc/components/scroll_fog/scroll_fog.md',
+  ),
+  DocPage(
+    '/components/side-navigation',
+    'Side Navigation',
+    'Components',
+    '그룹과 하위 메뉴로 서비스의 페이지를 탐색하는 사이드바.',
+    source: 'doc/components/side_navigation/side_navigation.md',
+  ),
+  DocPage(
+    '/components/text-area',
+    'Text Area',
+    'Components',
+    '내용에 맞춰 늘어나거나 정해진 높이에서 스크롤하는 여러 줄 입력.',
+    source: 'doc/components/text_input/text_area.md',
+  ),
+  DocPage(
+    '/components/text-input',
+    'Text Input',
+    'Components',
+    '입력 상태와 편집 동작을 갖춘 한 줄 텍스트 입력.',
+    source: 'doc/components/text_input/text_input.md',
   ),
   DocPage(
     '/foundations/color-reference',
