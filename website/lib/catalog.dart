@@ -118,6 +118,13 @@ const pages = [
     source: 'doc/components/checkbox/checkbox.md',
   ),
   DocPage(
+    '/components/chip',
+    'Chip',
+    'COMPONENTS',
+    '선택과 필터, 추천 동작, 입력값을 표현하는 작은 항목.',
+    source: 'doc/components/chip/chip.md',
+  ),
+  DocPage(
     '/components/divider',
     'Divider',
     'COMPONENTS',

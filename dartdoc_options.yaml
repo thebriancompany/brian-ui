@@ -42,6 +42,9 @@ dartdoc:
     Checkbox:
       markdown: doc/components/checkbox/checkbox.md
       displayName: 체크박스
+    Chip:
+      markdown: doc/components/chip/chip.md
+      displayName: 칩
     Divider:
       markdown: doc/components/divider/divider.md
       displayName: 구분선
@@ -70,6 +73,7 @@ dartdoc:
     - Badge
     - Callout
     - Checkbox
+    - Chip
     - Divider
     - ScrollFog
     - ColorReference

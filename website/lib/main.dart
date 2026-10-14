@@ -13,6 +13,7 @@ import 'button_playground.dart';
 import 'button_group_examples.dart';
 import 'callout_examples.dart';
 import 'checkbox_examples.dart';
+import 'chip_examples.dart';
 import 'divider_examples.dart';
 import 'scroll_fog_examples.dart';
 import 'catalog.dart';
@@ -237,6 +238,7 @@ class _DocsShellState extends State<DocsShell> {
                         const CalloutExamples(),
                       if (page.path == '/components/checkbox')
                         const CheckboxExamples(),
+                      if (page.path == '/components/chip') const ChipExamples(),
                       if (page.path == '/components/divider')
                         const DividerExamples(),
                       FoundationPreview(path: page.path),
