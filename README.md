@@ -11,6 +11,11 @@ Brian UI는 Flutter 기본 위젯 계층으로 만드는 독립 디자인 시스
 
 ## 컴포넌트
 
+- [Text Input 사용 가이드](https://github.com/thebriancompany/brian-ui/blob/develop/doc/components/text_input/text_input.md) — 한 줄 입력·지우기·앞뒤 슬롯
+- [Text Area 사용 가이드](https://github.com/thebriancompany/brian-ui/blob/develop/doc/components/text_input/text_area.md) — 여러 줄 입력·자동 높이·내부 스크롤
+
+- [Field 사용 가이드](https://github.com/thebriancompany/brian-ui/blob/develop/doc/components/field/field.md) — 라벨·입력·도움말·오류와 폼 검증 조합
+
 - [Divider 사용 가이드](https://github.com/thebriancompany/brian-ui/blob/develop/doc/components/divider/divider.md) — 섹션·목록·가로 배치의 시각적 경계
 - [Side Navigation 사용 가이드](https://github.com/thebriancompany/brian-ui/blob/develop/doc/components/side_navigation/side_navigation.md) — 그룹·하위 메뉴·접힌 탐색
 - [Scroll Fog 사용 가이드](https://github.com/thebriancompany/brian-ui/blob/develop/doc/components/scroll_fog/scroll_fog.md) — 스크롤 경계 그라디언트

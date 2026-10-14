@@ -45,6 +45,15 @@ dartdoc:
     Chip:
       markdown: doc/components/chip/chip.md
       displayName: 칩
+    TextInput:
+      markdown: doc/components/text_input/text_input.md
+      displayName: 텍스트 입력
+    TextArea:
+      markdown: doc/components/text_input/text_area.md
+      displayName: 여러 줄 입력
+    Field:
+      markdown: doc/components/field/field.md
+      displayName: 필드
     Divider:
       markdown: doc/components/divider/divider.md
       displayName: 구분선
@@ -77,6 +86,9 @@ dartdoc:
     - Callout
     - Checkbox
     - Chip
+    - TextInput
+    - TextArea
+    - Field
     - Divider
     - SideNavigation
     - ScrollFog
