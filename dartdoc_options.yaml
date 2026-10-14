@@ -48,6 +48,9 @@ dartdoc:
     Divider:
       markdown: doc/components/divider/divider.md
       displayName: 구분선
+    SideNavigation:
+      markdown: doc/components/side_navigation/side_navigation.md
+      displayName: 사이드 내비게이션
     ScrollFog:
       markdown: doc/components/scroll_fog/scroll_fog.md
       displayName: 스크롤 포그
@@ -75,6 +78,7 @@ dartdoc:
     - Checkbox
     - Chip
     - Divider
+    - SideNavigation
     - ScrollFog
     - ColorReference
     - Contrast

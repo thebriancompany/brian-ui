@@ -183,6 +183,8 @@ void main() {
     );
     await openPage(tester, '/components/button', size: const Size(360, 1000));
     expect(tester.takeException(), isNull);
+    await tester.tap(find.text('메뉴 · Button'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('다크 모드'));
     await tester.pumpAndSettle();
     expect(find.text('라이트 모드'), findsOneWidget);
@@ -207,7 +209,7 @@ void main() {
     expect(find.text('페이지를 찾을 수 없습니다'), findsOneWidget);
     await tester.tap(find.text('시작하기로 이동'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('메뉴 · 시작하기'));
+    await tester.tap(find.text('메뉴 · Getting Started'));
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(
       find.text('Button'),
