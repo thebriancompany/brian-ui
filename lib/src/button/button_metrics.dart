@@ -1,18 +1,49 @@
 import 'package:flutter/widgets.dart';
 
+import '../theme/brian_control_style.dart';
 import '../theme/brian_spacing_tokens.dart';
+import '../theme/brian_theme_data.dart';
 import '../typography/brian_typography.dart';
 import 'brian_button.dart';
 
 class ButtonMetrics {
-  ButtonMetrics(
-    this.size,
-    this.typography, [
-    this.spacing = const BrianSpacingTokens(),
-  ]);
-  final BrianSpacingTokens spacing;
+  ButtonMetrics(this.size, this.theme, {this.iconOnly = false});
+
   final BrianButtonSize size;
-  final BrianTypography typography;
+  final BrianThemeData theme;
+  final bool iconOnly;
+  BrianSpacingTokens get spacing => theme.spacing;
+  BrianTypography get typography => theme.typography;
+
+  BrianControlStyle get style {
+    final styles = iconOnly ? theme.iconButtons : theme.buttons;
+    return switch (size) {
+      BrianButtonSize.xsmall => styles.xsmall,
+      BrianButtonSize.small => styles.small,
+      BrianButtonSize.medium => styles.medium,
+      BrianButtonSize.large => styles.large,
+    };
+  }
+
+  EdgeInsetsGeometry get padding =>
+      style.padding ??
+      EdgeInsets.symmetric(
+        horizontal: iconOnly ? paddingY : paddingX,
+        vertical: paddingY,
+      );
+
+  OutlinedBorder shape(BorderSide side) =>
+      style.shape?.copyWith(side: side) ??
+      (size == BrianButtonSize.xsmall
+          ? StadiumBorder(side: side)
+          : RoundedRectangleBorder(
+              side: side,
+              borderRadius: BorderRadius.circular(
+                size == BrianButtonSize.large
+                    ? theme.radius.r3
+                    : theme.radius.r2,
+              ),
+            ));
 
   double get borderWidth => 1;
 

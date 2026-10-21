@@ -119,14 +119,12 @@ class _BrianButtonState extends State<BrianButton> {
   Widget build(BuildContext context) {
     final theme = BrianTheme.of(context);
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
-    final metrics = ButtonMetrics(widget.size, theme.typography, theme.spacing);
-    final styles = widget._iconOnly ? theme.iconButtons : theme.buttons;
-    final style = switch (widget.size) {
-      BrianButtonSize.xsmall => styles.xsmall,
-      BrianButtonSize.small => styles.small,
-      BrianButtonSize.medium => styles.medium,
-      BrianButtonSize.large => styles.large,
-    };
+    final metrics = ButtonMetrics(
+      widget.size,
+      theme,
+      iconOnly: widget._iconOnly,
+    );
+    final style = metrics.style;
     final colors = _ButtonColors.resolve(
       theme.colors,
       widget.variant,
@@ -233,18 +231,7 @@ class _BrianButtonState extends State<BrianButton> {
                       color: colors.border,
                       width: metrics.borderWidth,
                     );
-                    final OutlinedBorder shape =
-                        style.shape?.copyWith(side: border) ??
-                        (widget.size == BrianButtonSize.xsmall
-                            ? StadiumBorder(side: border)
-                            : RoundedRectangleBorder(
-                                side: border,
-                                borderRadius: BorderRadius.circular(
-                                  widget.size == BrianButtonSize.large
-                                      ? theme.radius.r3
-                                      : theme.radius.r2,
-                                ),
-                              ));
+                    final shape = metrics.shape(border);
                     return Container(
                       constraints: BoxConstraints(
                         minHeight: style.minimumSize?.height ?? metrics.height,
@@ -266,14 +253,7 @@ class _BrianButtonState extends State<BrianButton> {
                               ),
                             )
                           : null,
-                      padding:
-                          style.padding ??
-                          EdgeInsets.symmetric(
-                            horizontal: widget._iconOnly
-                                ? metrics.paddingY
-                                : metrics.paddingX,
-                            vertical: metrics.paddingY,
-                          ),
+                      padding: metrics.padding,
                       child: DefaultTextStyle(
                         style: DefaultTextStyle.of(context).style.merge(
                           metrics.textStyle.copyWith(color: colors.foreground),

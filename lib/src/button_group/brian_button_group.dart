@@ -35,7 +35,7 @@ class BrianButtonGroupAction {
 ///
 /// 유한한 너비 안에 배치하세요. 단일 버튼은 전체 너비를 채우며, 두 버튼은
 /// 같은 너비로 나눕니다. 가로 배치에서 어느 라벨이든 한 줄에 들어가지 않으면
-/// 둘 다 세로로 전환합니다. 현재 글꼴·글자 확대·명시적 줄바꿈을 반영합니다.
+/// 둘 다 세로로 전환합니다. 테마 패딩·현재 글꼴·글자 확대·명시적 줄바꿈을 반영합니다.
 /// 가로 순서는 읽기 방향 기준 보조→주요, 세로 순서는 위부터 주요→보조입니다.
 /// 긴 라벨은 말줄임 없이 표시하며 버튼 사이 간격은 8 논리 픽셀입니다.
 ///
@@ -56,7 +56,10 @@ class BrianButtonGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final metrics = ButtonMetrics(size, BrianTheme.of(context).typography);
+    final metrics = ButtonMetrics(size, BrianTheme.of(context));
+    final contentInsets = metrics.padding
+        .add(metrics.shape(BorderSide(width: metrics.borderWidth)).dimensions)
+        .resolve(Directionality.of(context));
     final style = DefaultTextStyle.of(context).style.merge(metrics.textStyle);
     final secondary = secondaryAction;
     Widget button(BrianButtonGroupAction action, {required bool primary}) =>
@@ -84,7 +87,7 @@ class BrianButtonGroup extends StatelessWidget {
         final labelWidth = math.max(
           0.0,
           (constraints.maxWidth - BrianSpacing.x2) / 2 -
-              (metrics.paddingX + metrics.borderWidth) * 2,
+              contentInsets.horizontal,
         );
         bool wraps(String label) {
           final painter = TextPainter(
