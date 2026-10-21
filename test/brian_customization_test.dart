@@ -143,6 +143,58 @@ void main() {
     }
   }
 
+  test('호환되지 않는 형태는 테마 보간 중 0.5에서 전환한다', () {
+    for (final shapes in [
+      (const CircleBorder(), const _CompoundInterpolatingBorder()),
+      (const _CompoundInterpolatingBorder(), const CircleBorder()),
+    ]) {
+      BrianThemeData theme(OutlinedBorder shape) {
+        final style = BrianControlStyle(shape: shape);
+        return BrianThemeData.light.copyWith(
+          buttons: BrianButtonStyles(medium: style),
+          iconButtons: BrianButtonStyles(medium: style),
+          chips: BrianChipStyles(medium: style),
+        );
+      }
+
+      for (final t in [0.0, .25, .49, .5, .75, 1.0]) {
+        final interpolated = theme(shapes.$1).lerp(theme(shapes.$2), t);
+        final expected = t < .5 ? shapes.$1 : shapes.$2;
+        expect(interpolated.buttons.medium.shape, expected);
+        expect(interpolated.iconButtons.medium.shape, expected);
+        expect(interpolated.chips.medium.shape, expected);
+      }
+    }
+  });
+
+  test('원형과 캡슐 사이의 지원되는 형태 보간은 유지한다', () {
+    const a = BrianControlStyle(shape: CircleBorder());
+    const b = BrianControlStyle(shape: StadiumBorder());
+    for (final t in [.25, .5, .75]) {
+      expect(a.lerp(b, t).shape, ShapeBorder.lerp(a.shape, b.shape, t));
+      expect(b.lerp(a, t).shape, ShapeBorder.lerp(b.shape, a.shape, t));
+    }
+  });
+
+  test('호환되는 형태는 중간 모서리 값으로 보간한다', () {
+    const start = BrianControlStyle(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+      ),
+    );
+    const end = BrianControlStyle(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(24)),
+      ),
+    );
+    expect(
+      start.lerp(end, .5).shape,
+      const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(16)),
+      ),
+    );
+  });
+
   test('테마 값 비교·복사·보간은 레이아웃을 포함한다', () {
     final a = BrianThemeData.light.copyWith(
       buttons: const BrianButtonStyles(
@@ -455,4 +507,16 @@ void main() {
       const BorderRadius.vertical(top: Radius.circular(32)),
     );
   });
+}
+
+// 사용자 정의 형태가 OutlinedBorder가 아닌 합성 테두리를 반환하는 경우입니다.
+class _CompoundInterpolatingBorder extends RoundedRectangleBorder {
+  const _CompoundInterpolatingBorder();
+
+  @override
+  ShapeBorder? lerpFrom(ShapeBorder? a, double t) =>
+      a == null ? null : a + this;
+
+  @override
+  ShapeBorder? lerpTo(ShapeBorder? b, double t) => b == null ? null : this + b;
 }

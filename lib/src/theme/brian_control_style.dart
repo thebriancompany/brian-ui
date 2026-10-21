@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 /// 최소 크기는 부모 제약 안에서 적용하며 콘텐츠는 더 커질 수 있습니다.
 /// copyWith의 null은 유지입니다. 초기화하려면 새 스타일을 지정하세요.
 /// 보간 시 양쪽에 값이 있으면 보간하고, 한쪽이 null이면 0.5에서 전환합니다.
+/// 형태 보간 결과가 OutlinedBorder가 아니어도 0.5에서 원본 형태를 전환합니다.
 ///
 /// {@category Theme}
 @immutable
@@ -41,28 +42,33 @@ class BrianControlStyle {
     iconSize: iconSize ?? this.iconSize,
     shape: shape ?? this.shape,
   );
-  BrianControlStyle lerp(BrianControlStyle other, double t) =>
-      BrianControlStyle(
-        minimumSize: minimumSize == null || other.minimumSize == null
-            ? (t < .5 ? minimumSize : other.minimumSize)
-            : Size.lerp(minimumSize, other.minimumSize, t),
-        minimumTouchTarget:
-            minimumTouchTarget == null || other.minimumTouchTarget == null
-            ? (t < .5 ? minimumTouchTarget : other.minimumTouchTarget)
-            : Size.lerp(minimumTouchTarget, other.minimumTouchTarget, t),
-        padding: padding == null || other.padding == null
-            ? (t < .5 ? padding : other.padding)
-            : EdgeInsetsGeometry.lerp(padding, other.padding, t),
-        gap: gap == null || other.gap == null
-            ? (t < .5 ? gap : other.gap)
-            : lerpDouble(gap, other.gap, t),
-        iconSize: iconSize == null || other.iconSize == null
-            ? (t < .5 ? iconSize : other.iconSize)
-            : lerpDouble(iconSize, other.iconSize, t),
-        shape: shape == null || other.shape == null
-            ? (t < .5 ? shape : other.shape)
-            : ShapeBorder.lerp(shape, other.shape, t) as OutlinedBorder?,
-      );
+  BrianControlStyle lerp(BrianControlStyle other, double t) {
+    final interpolatedShape = shape == null || other.shape == null
+        ? null
+        : ShapeBorder.lerp(shape, other.shape, t);
+    return BrianControlStyle(
+      minimumSize: minimumSize == null || other.minimumSize == null
+          ? (t < .5 ? minimumSize : other.minimumSize)
+          : Size.lerp(minimumSize, other.minimumSize, t),
+      minimumTouchTarget:
+          minimumTouchTarget == null || other.minimumTouchTarget == null
+          ? (t < .5 ? minimumTouchTarget : other.minimumTouchTarget)
+          : Size.lerp(minimumTouchTarget, other.minimumTouchTarget, t),
+      padding: padding == null || other.padding == null
+          ? (t < .5 ? padding : other.padding)
+          : EdgeInsetsGeometry.lerp(padding, other.padding, t),
+      gap: gap == null || other.gap == null
+          ? (t < .5 ? gap : other.gap)
+          : lerpDouble(gap, other.gap, t),
+      iconSize: iconSize == null || other.iconSize == null
+          ? (t < .5 ? iconSize : other.iconSize)
+          : lerpDouble(iconSize, other.iconSize, t),
+      shape: interpolatedShape is OutlinedBorder
+          ? interpolatedShape
+          : (t < .5 ? shape : other.shape),
+    );
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
