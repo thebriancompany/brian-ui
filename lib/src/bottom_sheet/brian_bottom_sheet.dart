@@ -4,9 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import '../radius/brian_radius.dart';
 import '../scroll_fog/brian_scroll_fog.dart';
-import '../spacing/brian_spacing.dart';
 import '../theme/brian_theme.dart';
 
 /// 콘텐츠 크기에 맞추고 화면 높이가 부족하면 내부를 스크롤하는 모달입니다.
@@ -218,16 +216,19 @@ class _BrianBottomSheetState extends State<BrianBottomSheet>
         builder: (context, child) =>
             Transform.translate(offset: Offset(0, _offset.value), child: child),
         child: SizedBox(
-          width: 640,
+          width: theme.bottomSheet.maxWidth ?? 640,
           child: Semantics(
             scopesRoute: true,
             explicitChildNodes: true,
             namesRoute: true,
             label: widget.semanticLabel,
             child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(BrianRadius.r6),
-              ),
+              borderRadius:
+                  (theme.bottomSheet.borderRadius ??
+                          BorderRadius.vertical(
+                            top: Radius.circular(theme.radius.r6),
+                          ))
+                      .resolve(Directionality.of(context)),
               child: ColoredBox(
                 key: _surface,
                 color: theme.colors.background.layerDefault,
@@ -272,7 +273,9 @@ class _BrianBottomSheetState extends State<BrianBottomSheet>
                     child: SafeArea(
                       top: false,
                       child: Padding(
-                        padding: const EdgeInsets.all(BrianSpacing.x6),
+                        padding:
+                            theme.bottomSheet.padding ??
+                            EdgeInsets.all(theme.spacing.x6),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -285,12 +288,16 @@ class _BrianBottomSheetState extends State<BrianBottomSheet>
                                   decoration: BoxDecoration(
                                     color: theme.colors.stroke.neutralWeak,
                                     borderRadius: BorderRadius.circular(
-                                      BrianRadius.r1,
+                                      theme.radius.r1,
                                     ),
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: BrianSpacing.x5),
+                              SizedBox(
+                                height:
+                                    theme.bottomSheet.sectionGap ??
+                                    theme.spacing.x5,
+                              ),
                             ],
                             if (widget.header != null) ...[
                               Semantics(
@@ -298,7 +305,11 @@ class _BrianBottomSheetState extends State<BrianBottomSheet>
                                 explicitChildNodes: true,
                                 child: widget.header!,
                               ),
-                              const SizedBox(height: BrianSpacing.x5),
+                              SizedBox(
+                                height:
+                                    theme.bottomSheet.sectionGap ??
+                                    theme.spacing.x5,
+                              ),
                             ],
                             Flexible(
                               child: Stack(
