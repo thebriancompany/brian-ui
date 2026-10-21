@@ -238,8 +238,11 @@ final darkTheme = customTheme(Brightness.dark);
 ```
 
 `minimumSize`는 시각적 최소 크기이며 콘텐츠에 따라 늘어납니다.
-`minimumTouchTarget`은 투명한 터치 영역을 추가합니다. 두 값 모두 부모 제약을
-따르므로 필요한 터치 크기보다 작은 최대 크기를 지정하지 마세요.
+`minimumTouchTarget`은 부모 제약이 허용하는 범위에서 투명한 터치 영역을 추가합니다.
+예를 들어 표면 40×40에 터치 영역 48×48을 지정해도, `SizedBox`나
+`IntrinsicWidth`·`IntrinsicHeight`가 고정한 축에서는 표면도 그 크기를 따릅니다.
+표면 크기를 유지하려면 해당 축의 부모 제약에 여유를 두세요. 부모의 최대 크기가
+터치 최소 크기보다 작으면 터치 영역도 그 최대 크기로 제한됩니다.
 `EdgeInsetsDirectional` 패딩은 RTL에서 방향에 맞게 해석합니다.
 
 `copyWith`의 null은 기존 값을 유지합니다. 크기별 덮어쓰기를 초기화하려면

@@ -22,6 +22,9 @@ class BrianControlStyle {
     this.shape,
   });
   final Size? minimumSize;
+
+  /// 부모 제약이 허용하는 범위에서 투명한 터치 영역을 추가합니다.
+  /// SizedBox·IntrinsicWidth·IntrinsicHeight의 고정 크기는 표면에도 적용됩니다.
   final Size? minimumTouchTarget;
   final EdgeInsetsGeometry? padding;
   final double? gap;

@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
-/// 시각적 크기를 유지하면서 부모 제약 안에서 터치 영역을 확보합니다.
+/// 부모 제약을 우선하고 남는 공간에서 투명한 터치 영역을 확보합니다.
 class ControlTouchTarget extends SingleChildRenderObjectWidget {
   const ControlTouchTarget({
     super.key,

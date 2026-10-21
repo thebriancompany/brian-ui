@@ -46,37 +46,87 @@ Color fill(WidgetTester tester, Type type) {
 void main() {
   for (final intrinsicWidth in [true, false]) {
     for (final kind in ['button', 'icon', 'chip']) {
-      testWidgets('최소 터치 영역의 intrinsic 배치: $kind / width=$intrinsicWidth', (
-        tester,
-      ) async {
-        const style = BrianControlStyle(minimumTouchTarget: Size.square(48));
-        final theme = BrianThemeData.light.copyWith(
-          buttons: const BrianButtonStyles(medium: style),
-          iconButtons: const BrianButtonStyles(medium: style),
-          chips: const BrianChipStyles(medium: style),
-        );
-        final control = switch (kind) {
-          'button' => BrianButton(onPressed: () {}, child: const Text('확인')),
-          'icon' => BrianButton.icon(
-            onPressed: () {},
-            icon: const SizedBox.square(dimension: 16),
-            semanticLabel: '열기',
-          ),
-          _ => BrianChip(onPressed: () {}, child: const Text('선택')),
-        };
-        await tester.pumpWidget(
-          host(
+      testWidgets(
+        '터치 영역 분리와 intrinsic·고정 크기 우선순위: $kind / width=$intrinsicWidth',
+        (tester) async {
+          const style = BrianControlStyle(
+            minimumSize: Size.square(40),
+            minimumTouchTarget: Size.square(48),
+            padding: EdgeInsets.zero,
+          );
+          final theme = BrianThemeData.light.copyWith(
+            buttons: const BrianButtonStyles(medium: style),
+            iconButtons: const BrianButtonStyles(medium: style),
+            chips: const BrianChipStyles(medium: style),
+          );
+          var presses = 0;
+          const content = SizedBox.square(dimension: 16);
+          final control = switch (kind) {
+            'button' => BrianButton(onPressed: () => presses++, child: content),
+            'icon' => BrianButton.icon(
+              onPressed: () => presses++,
+              icon: content,
+              semanticLabel: '열기',
+            ),
+            _ => BrianChip(onPressed: () => presses++, child: content),
+          };
+          final type = kind == 'chip' ? BrianChip : BrianButton;
+          // 칩은 본문 최소 높이 바깥에 위아래 1px 테두리를 더합니다.
+          final visualSize = Size(40, kind == 'chip' ? 42 : 40);
+          await tester.pumpWidget(host(control, theme));
+          expect(tester.getSize(find.byWidget(control)), const Size.square(48));
+          expect(tester.getSize(surface(type)), visualSize);
+          await tester.tapAt(
+            tester.getTopLeft(find.byWidget(control)) + const Offset(2, 2),
+          );
+          expect(presses, 1);
+
+          await tester.pumpWidget(
+            host(
+              intrinsicWidth
+                  ? IntrinsicWidth(child: control)
+                  : IntrinsicHeight(child: control),
+              theme,
+            ),
+          );
+          final intrinsicSurface = tester.getSize(surface(type));
+          expect(tester.getSize(find.byWidget(control)), const Size.square(48));
+          expect(
+            intrinsicSurface,
             intrinsicWidth
-                ? IntrinsicWidth(child: control)
-                : IntrinsicHeight(child: control),
-            theme,
-          ),
-        );
-        expect(tester.takeException(), isNull);
-        final size = tester.getSize(find.byWidget(control));
-        expect(size.width, greaterThanOrEqualTo(48));
-        expect(size.height, greaterThanOrEqualTo(48));
-      });
+                ? Size(48, visualSize.height)
+                : Size(visualSize.width, 48),
+          );
+
+          await tester.pumpWidget(
+            host(
+              SizedBox(
+                width: intrinsicWidth ? 48 : null,
+                height: intrinsicWidth ? null : 48,
+                child: control,
+              ),
+              theme,
+            ),
+          );
+          expect(tester.getSize(surface(type)), intrinsicSurface);
+          expect(tester.getSize(find.byWidget(control)), const Size.square(48));
+
+          for (final dimension in [24.0, 72.0]) {
+            await tester.pumpWidget(
+              host(
+                SizedBox.square(dimension: dimension, child: control),
+                theme,
+              ),
+            );
+            expect(
+              tester.getSize(find.byWidget(control)),
+              Size.square(dimension),
+            );
+            expect(tester.getSize(surface(type)), Size.square(dimension));
+            expect(tester.takeException(), isNull);
+          }
+        },
+      );
     }
   }
 
