@@ -4,8 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import '../color/brian_colors.dart';
-import '../radius/brian_radius.dart';
-import '../spacing/brian_spacing.dart';
+import '../layout/control_touch_target.dart';
 import '../theme/brian_theme.dart';
 import 'button_metrics.dart';
 
@@ -120,7 +119,12 @@ class _BrianButtonState extends State<BrianButton> {
   Widget build(BuildContext context) {
     final theme = BrianTheme.of(context);
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
-    final metrics = ButtonMetrics(widget.size, theme.typography);
+    final metrics = ButtonMetrics(
+      widget.size,
+      theme,
+      iconOnly: widget._iconOnly,
+    );
+    final style = metrics.style;
     final colors = _ButtonColors.resolve(
       theme.colors,
       widget.variant,
@@ -136,11 +140,11 @@ class _BrianButtonState extends State<BrianButton> {
             children: [
               if (widget.leading != null) ...[
                 widget.leading!,
-                SizedBox(width: metrics.gap),
+                SizedBox(width: style.gap ?? metrics.gap),
               ],
               Flexible(child: widget.child),
               if (widget.trailing != null) ...[
-                SizedBox(width: metrics.gap),
+                SizedBox(width: style.gap ?? metrics.gap),
                 widget.trailing!,
               ],
             ],
@@ -208,101 +212,90 @@ class _BrianButtonState extends State<BrianButton> {
             onTapDown: _enabled ? (_) => _setPressed(true) : null,
             onTapUp: _enabled ? (_) => _setPressed(false) : null,
             onTapCancel: () => _setPressed(false),
-            child: AnimatedScale(
-              scale: !reduceMotion && _enabled && _pressed ? 0.97 : 1,
-              duration: reduceMotion
-                  ? Duration.zero
-                  : const Duration(milliseconds: 100),
-              curve: Curves.easeOutCubic,
-              child: TweenAnimationBuilder<_ButtonColors>(
-                tween: _ButtonColorsTween(end: colors),
+            child: ControlTouchTarget(
+              minimumSize: style.minimumTouchTarget,
+              child: AnimatedScale(
+                scale: !reduceMotion && _enabled && _pressed ? 0.97 : 1,
                 duration: reduceMotion
                     ? Duration.zero
-                    : const Duration(milliseconds: 150),
+                    : const Duration(milliseconds: 100),
                 curve: Curves.easeOutCubic,
-                builder: (context, colors, _) {
-                  final border = BorderSide(
-                    color: colors.border,
-                    width: metrics.borderWidth,
-                  );
-                  final OutlinedBorder shape =
-                      widget.size == BrianButtonSize.xsmall
-                      ? StadiumBorder(side: border)
-                      : RoundedRectangleBorder(
-                          side: border,
-                          borderRadius: BorderRadius.circular(
-                            widget.size == BrianButtonSize.large
-                                ? BrianRadius.r3
-                                : BrianRadius.r2,
-                          ),
-                        );
-                  return Container(
-                    constraints: BoxConstraints(
-                      minHeight: metrics.height,
-                      minWidth: metrics.height,
-                    ),
-                    decoration: ShapeDecoration(
-                      color: colors.background,
-                      shape: shape,
-                    ),
-                    foregroundDecoration: _focused && _enabled
-                        ? ShapeDecoration(
-                            shape: shape.copyWith(
-                              side: BorderSide(
-                                color: theme.colors.stroke.focusRing,
-                                width: 2,
-                                // 2픽셀 간격을 두고 바깥쪽 2~4픽셀에 그립니다.
-                                strokeAlign: 3,
-                              ),
-                            ),
-                          )
-                        : null,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: widget._iconOnly
-                          ? metrics.paddingY
-                          : metrics.paddingX,
-                      vertical: metrics.paddingY,
-                    ),
-                    child: DefaultTextStyle(
-                      style: DefaultTextStyle.of(context).style.merge(
-                        metrics.textStyle.copyWith(color: colors.foreground),
+                child: TweenAnimationBuilder<_ButtonColors>(
+                  tween: _ButtonColorsTween(end: colors),
+                  duration: reduceMotion
+                      ? Duration.zero
+                      : const Duration(milliseconds: 150),
+                  curve: Curves.easeOutCubic,
+                  builder: (context, colors, _) {
+                    final border = BorderSide(
+                      color: colors.border,
+                      width: metrics.borderWidth,
+                    );
+                    final shape = metrics.shape(border);
+                    return Container(
+                      constraints: BoxConstraints(
+                        minHeight: style.minimumSize?.height ?? metrics.height,
+                        minWidth: style.minimumSize?.width ?? metrics.height,
                       ),
-                      textAlign: TextAlign.center,
-                      child: IconTheme(
-                        data: IconThemeData(
-                          color: colors.foreground,
-                          size:
-                              widget._iconOnly &&
-                                  widget.size == BrianButtonSize.small
-                              ? BrianSpacing.x4
-                              : metrics.iconSize,
-                        ),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            ExcludeSemantics(
-                              excluding: widget.semanticLabel != null,
-                              child: Opacity(
-                                opacity: widget.isLoading ? 0 : 1,
-                                alwaysIncludeSemantics: true,
-                                child: content,
-                              ),
-                            ),
-                            if (widget.isLoading)
-                              Positioned.fill(
-                                child: Center(
-                                  child: _ButtonProgress(
-                                    color: colors.foreground,
-                                    size: metrics.progressSize,
-                                  ),
+                      decoration: ShapeDecoration(
+                        color: colors.background,
+                        shape: shape,
+                      ),
+                      foregroundDecoration: _focused && _enabled
+                          ? ShapeDecoration(
+                              shape: shape.copyWith(
+                                side: BorderSide(
+                                  color: theme.colors.stroke.focusRing,
+                                  width: 2,
+                                  // 2픽셀 간격을 두고 바깥쪽 2~4픽셀에 그립니다.
+                                  strokeAlign: 3,
                                 ),
                               ),
-                          ],
+                            )
+                          : null,
+                      padding: metrics.padding,
+                      child: DefaultTextStyle(
+                        style: DefaultTextStyle.of(context).style.merge(
+                          metrics.textStyle.copyWith(color: colors.foreground),
+                        ),
+                        textAlign: TextAlign.center,
+                        child: IconTheme(
+                          data: IconThemeData(
+                            color: colors.foreground,
+                            size:
+                                style.iconSize ??
+                                (widget._iconOnly &&
+                                        widget.size == BrianButtonSize.small
+                                    ? theme.spacing.x4
+                                    : metrics.iconSize),
+                          ),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              ExcludeSemantics(
+                                excluding: widget.semanticLabel != null,
+                                child: Opacity(
+                                  opacity: widget.isLoading ? 0 : 1,
+                                  alwaysIncludeSemantics: true,
+                                  child: content,
+                                ),
+                              ),
+                              if (widget.isLoading)
+                                Positioned.fill(
+                                  child: Center(
+                                    child: _ButtonProgress(
+                                      color: colors.foreground,
+                                      size: metrics.progressSize,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ),

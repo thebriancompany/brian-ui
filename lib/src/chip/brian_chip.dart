@@ -2,12 +2,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import '../button/brian_button.dart';
+import '../layout/control_touch_target.dart';
 import '../theme/brian_theme.dart';
 
 /// 채움, 강한 외곽선, 약한 외곽선으로 강조도를 조절합니다.
 ///
 /// {@category Chip}
 enum BrianChipVariant { solid, outlineStrong, outlineWeak }
+
+/// 선택 상태의 역할 색상을 결정합니다. brand는 약한 브랜드 배경과 체크를 사용합니다.
+///
+/// {@category Chip}
+enum BrianChipTone { neutral, brand }
 
 /// 최소 높이는 각각 32, 36, 40 논리 픽셀입니다. 글자 확대 시 늘어납니다.
 ///
@@ -35,6 +41,7 @@ class BrianChip extends StatefulWidget {
     required this.child,
     required this.onPressed,
     this.selected,
+    this.tone = BrianChipTone.neutral,
     this.variant = BrianChipVariant.outlineWeak,
     this.size = BrianChipSize.medium,
     this.leading,
@@ -51,6 +58,7 @@ class BrianChip extends StatefulWidget {
   final Widget child;
   final VoidCallback? onPressed;
   final bool? selected;
+  final BrianChipTone tone;
   final BrianChipVariant variant;
   final BrianChipSize size;
 
@@ -99,6 +107,11 @@ class _BrianChipState extends State<BrianChip> {
   @override
   Widget build(BuildContext context) {
     final theme = BrianTheme.of(context);
+    final control = switch (widget.size) {
+      BrianChipSize.small => theme.chips.small,
+      BrianChipSize.medium => theme.chips.medium,
+      BrianChipSize.large => theme.chips.large,
+    };
     final bg = theme.colors.background;
     final fg = theme.colors.foreground;
     final stroke = theme.colors.stroke;
@@ -109,8 +122,11 @@ class _BrianChipState extends State<BrianChip> {
     final active = _actionable && (_pressed || _hovered);
     final solid = widget.variant == BrianChipVariant.solid;
     final strong = widget.variant == BrianChipVariant.outlineStrong;
+    final brandSelected = widget.tone == BrianChipTone.brand && selected;
     final background = disabled
         ? (solid ? bg.disabled : bg.transparent)
+        : brandSelected
+        ? (active ? bg.brandWeakPressed : bg.brandWeak)
         : solid && selected
         ? (active ? bg.neutralSolidPressed : bg.neutralSolid)
         : solid || selected
@@ -118,79 +134,114 @@ class _BrianChipState extends State<BrianChip> {
         : (active ? bg.transparentPressed : bg.transparent);
     final foreground = disabled
         ? fg.disabled
+        : brandSelected
+        ? fg.brandContrast
         : solid && selected
         ? fg.onNeutralSolid
         : fg.neutral;
-    final border = solid
+    final border = brandSelected && !disabled
+        ? stroke.brandSolid
+        : solid
         ? bg.transparent
         : selected && strong
         ? stroke.neutralContrast
         : strong
         ? stroke.neutralSolid
         : stroke.neutralWeak;
-    final height = switch (widget.size) {
-      BrianChipSize.small => 32.0,
-      BrianChipSize.medium => 36.0,
-      BrianChipSize.large => 40.0,
-    };
-    final padding = widget.size == BrianChipSize.small ? 10.0 : 12.0;
+    final height =
+        control.minimumSize?.height ??
+        switch (widget.size) {
+          BrianChipSize.small => theme.spacing.x8,
+          BrianChipSize.medium => theme.spacing.x9,
+          BrianChipSize.large => theme.spacing.x10,
+        };
+    final padding = widget.size == BrianChipSize.small
+        ? theme.spacing.x2Point5
+        : theme.spacing.x3;
     final style = widget.size == BrianChipSize.small
         ? theme.typography.t4Medium
         : theme.typography.t5Medium;
     Widget? leading = widget.leading;
     if (leading != null) {
       leading = SizedBox.square(
-        dimension: widget.leadingStyle == BrianChipLeadingStyle.icon ? 16 : 24,
+        dimension: widget.leadingStyle == BrianChipLeadingStyle.icon
+            ? (control.iconSize ?? 16)
+            : 24,
         child: switch (widget.leadingStyle) {
           BrianChipLeadingStyle.icon => leading,
           BrianChipLeadingStyle.avatar => ClipOval(child: leading),
           BrianChipLeadingStyle.image => ClipRRect(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(theme.radius.r1),
             child: leading,
           ),
         },
       );
     }
     final body = Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(
-        leading != null && widget.leadingStyle != BrianChipLeadingStyle.icon
-            ? 4
-            : padding,
-        6,
-        widget.onDeleted != null ? 2 : padding,
-        6,
-      ),
+      padding:
+          control.padding ??
+          EdgeInsetsDirectional.fromSTEB(
+            leading != null && widget.leadingStyle != BrianChipLeadingStyle.icon
+                ? theme.spacing.x1
+                : padding,
+            theme.spacing.x1Point5,
+            widget.onDeleted != null ? theme.spacing.x0Point5 : padding,
+            theme.spacing.x1Point5,
+          ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (leading != null) ...[
             _decoration(leading),
-            const SizedBox(width: 6),
+            SizedBox(width: control.gap ?? theme.spacing.x1Point5),
+          ],
+          if (brandSelected) ...[
+            _decoration(
+              CustomPaint(
+                size: const Size.square(16),
+                painter: _CheckPainter(foreground),
+              ),
+            ),
+            SizedBox(width: control.gap ?? theme.spacing.x1Point5),
           ],
           Flexible(child: widget.child),
           if (widget.trailing != null) ...[
-            const SizedBox(width: 6),
+            SizedBox(width: control.gap ?? theme.spacing.x1Point5),
             _decoration(widget.trailing!),
           ],
         ],
       ),
     );
     final inputOnly = widget.onPressed == null && widget.onDeleted != null;
-    return Container(
-      constraints: BoxConstraints(minHeight: height),
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: border),
+    final surface = Container(
+      constraints: BoxConstraints(
+        minHeight: height,
+        minWidth: control.minimumSize?.width ?? 0,
       ),
-      foregroundDecoration: _focused
-          ? BoxDecoration(
-              borderRadius: BorderRadius.circular(999),
-              border: Border.all(color: stroke.focusRing, width: 2),
+      decoration: control.shape != null
+          ? ShapeDecoration(
+              color: background,
+              shape: control.shape!.copyWith(side: BorderSide(color: border)),
             )
+          : BoxDecoration(
+              color: background,
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: border),
+            ),
+      foregroundDecoration: _focused
+          ? (control.shape != null
+                ? ShapeDecoration(
+                    shape: control.shape!.copyWith(
+                      side: BorderSide(color: stroke.focusRing, width: 2),
+                    ),
+                  )
+                : BoxDecoration(
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(color: stroke.focusRing, width: 2),
+                  ))
           : null,
       child: IconTheme(
-        data: IconThemeData(color: foreground, size: 16),
+        data: IconThemeData(color: foreground, size: control.iconSize ?? 16),
         child: DefaultTextStyle.merge(
           style: style.copyWith(color: foreground),
           child: Row(
@@ -199,102 +250,81 @@ class _BrianChipState extends State<BrianChip> {
               Flexible(
                 child: inputOnly
                     ? body
-                    : Semantics(
-                        button: true,
-                        enabled: _actionable,
-                        selected: widget.selected,
-                        onTap: _actionable ? widget.onPressed : null,
-                        child: Focus(
-                          canRequestFocus: false,
-                          skipTraversal: true,
-                          onKeyEvent: (_, event) {
-                            final activation =
-                                event.logicalKey == LogicalKeyboardKey.enter ||
-                                event.logicalKey == LogicalKeyboardKey.space;
-                            if (activation && event is KeyUpEvent) {
-                              _setPressed(false);
-                            }
-                            if (activation && event is KeyRepeatEvent) {
-                              return KeyEventResult.handled;
-                            }
-                            return KeyEventResult.ignored;
+                    : Focus(
+                        canRequestFocus: false,
+                        skipTraversal: true,
+                        onKeyEvent: (_, event) {
+                          final activation =
+                              event.logicalKey == LogicalKeyboardKey.enter ||
+                              event.logicalKey == LogicalKeyboardKey.space;
+                          if (activation && event is KeyUpEvent) {
+                            _setPressed(false);
+                          }
+                          if (activation && event is KeyRepeatEvent) {
+                            return KeyEventResult.handled;
+                          }
+                          return KeyEventResult.ignored;
+                        },
+                        child: FocusableActionDetector(
+                          enabled: _actionable,
+                          focusNode: widget.focusNode,
+                          autofocus: widget.autofocus,
+                          mouseCursor: _actionable
+                              ? SystemMouseCursors.click
+                              : SystemMouseCursors.basic,
+                          onShowFocusHighlight: (value) =>
+                              setState(() => _focused = value),
+                          onShowHoverHighlight: (value) =>
+                              setState(() => _hovered = value),
+                          onFocusChange: (value) {
+                            if (!value) _setPressed(false);
                           },
-                          child: FocusableActionDetector(
-                            enabled: _actionable,
-                            focusNode: widget.focusNode,
-                            autofocus: widget.autofocus,
-                            mouseCursor: _actionable
-                                ? SystemMouseCursors.click
-                                : SystemMouseCursors.basic,
-                            onShowFocusHighlight: (value) =>
-                                setState(() => _focused = value),
-                            onShowHoverHighlight: (value) =>
-                                setState(() => _hovered = value),
-                            onFocusChange: (value) {
-                              if (!value) _setPressed(false);
-                            },
-                            shortcuts: const {
-                              SingleActivator(
-                                LogicalKeyboardKey.enter,
-                                includeRepeats: false,
-                              ): ActivateIntent(),
-                              SingleActivator(
-                                LogicalKeyboardKey.space,
-                                includeRepeats: false,
-                              ): ActivateIntent(),
-                            },
-                            actions: {
-                              ActivateIntent: CallbackAction<ActivateIntent>(
-                                onInvoke: (_) {
-                                  if (_actionable) {
-                                    final keys = HardwareKeyboard
-                                        .instance
-                                        .logicalKeysPressed;
-                                    if (keys.contains(
-                                          LogicalKeyboardKey.enter,
-                                        ) ||
-                                        keys.contains(
-                                          LogicalKeyboardKey.space,
-                                        )) {
-                                      _setPressed(true);
-                                    }
-                                    widget.onPressed!();
+                          shortcuts: const {
+                            SingleActivator(
+                              LogicalKeyboardKey.enter,
+                              includeRepeats: false,
+                            ): ActivateIntent(),
+                            SingleActivator(
+                              LogicalKeyboardKey.space,
+                              includeRepeats: false,
+                            ): ActivateIntent(),
+                          },
+                          actions: {
+                            ActivateIntent: CallbackAction<ActivateIntent>(
+                              onInvoke: (_) {
+                                if (_actionable) {
+                                  final keys = HardwareKeyboard
+                                      .instance
+                                      .logicalKeysPressed;
+                                  if (keys.contains(LogicalKeyboardKey.enter) ||
+                                      keys.contains(LogicalKeyboardKey.space)) {
+                                    _setPressed(true);
                                   }
-                                  return null;
-                                },
-                              ),
-                            },
-                            child: GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              excludeFromSemantics: true,
-                              onTap: _actionable ? widget.onPressed : null,
-                              onTapDown: _actionable
-                                  ? (_) => _setPressed(true)
-                                  : null,
-                              onTapUp: _actionable
-                                  ? (_) => _setPressed(false)
-                                  : null,
-                              onTapCancel: _actionable
-                                  ? () => _setPressed(false)
-                                  : null,
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(minHeight: height),
-                                child: body,
-                              ),
+                                  widget.onPressed!();
+                                }
+                                return null;
+                              },
                             ),
+                          },
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(minHeight: height),
+                            child: body,
                           ),
                         ),
                       ),
               ),
               if (widget.onDeleted != null)
-                BrianButton.icon(
-                  onPressed: widget.enabled ? widget.onDeleted : null,
-                  semanticLabel: widget.deleteLabel,
-                  variant: BrianButtonVariant.ghost,
-                  size: BrianButtonSize.xsmall,
-                  icon: CustomPaint(
-                    size: const Size.square(16),
-                    painter: _DeletePainter(foreground),
+                Semantics(
+                  container: true,
+                  child: BrianButton.icon(
+                    onPressed: widget.enabled ? widget.onDeleted : null,
+                    semanticLabel: widget.deleteLabel,
+                    variant: BrianButtonVariant.ghost,
+                    size: BrianButtonSize.xsmall,
+                    icon: CustomPaint(
+                      size: const Size.square(16),
+                      painter: _DeletePainter(foreground),
+                    ),
                   ),
                 ),
             ],
@@ -302,7 +332,52 @@ class _BrianChipState extends State<BrianChip> {
         ),
       ),
     );
+    final target = GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      excludeFromSemantics: true,
+      onTap: _actionable ? widget.onPressed : null,
+      onTapDown: _actionable ? (_) => _setPressed(true) : null,
+      onTapUp: _actionable ? (_) => _setPressed(false) : null,
+      onTapCancel: () => _setPressed(false),
+      child: ControlTouchTarget(
+        minimumSize: control.minimumTouchTarget,
+        child: surface,
+      ),
+    );
+    // 삭제 버튼은 독립 노드로 남기고 본문 액션의 접근성 영역도 함께 확장합니다.
+    return inputOnly
+        ? target
+        : Semantics(
+            button: true,
+            enabled: _actionable,
+            selected: widget.selected,
+            onTap: _actionable ? widget.onPressed : null,
+            child: target,
+          );
   }
+}
+
+class _CheckPainter extends CustomPainter {
+  const _CheckPainter(this.color);
+  final Color color;
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawPath(
+      Path()
+        ..moveTo(size.width * .2, size.height * .5)
+        ..lineTo(size.width * .42, size.height * .72)
+        ..lineTo(size.width * .8, size.height * .28),
+      Paint()
+        ..color = color
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_CheckPainter oldDelegate) => color != oldDelegate.color;
 }
 
 class _DeletePainter extends CustomPainter {

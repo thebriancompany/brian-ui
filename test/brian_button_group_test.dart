@@ -4,13 +4,14 @@ import 'package:flutter_test/flutter_test.dart';
 
 Widget host(
   BrianButtonGroup group, {
+  BrianThemeData? theme,
   double width = 320,
   double scale = 1,
   TextDirection direction = TextDirection.ltr,
 }) => WidgetsApp(
   color: const Color(0xFFFFFFFF),
   builder: (context, _) => BrianTheme(
-    data: BrianThemeData.light,
+    data: theme ?? BrianThemeData.light,
     child: MediaQuery(
       data: MediaQueryData(textScaler: TextScaler.linear(scale)),
       child: Directionality(
@@ -39,6 +40,68 @@ Rect rect(WidgetTester tester, String label) =>
     tester.getRect(find.widgetWithText(BrianButton, label));
 
 void main() {
+  for (final customPadding in [false, true]) {
+    testWidgets('테마 ${customPadding ? "패딩" : "간격 토큰"}으로 줄바꿈을 판정한다', (
+      tester,
+    ) async {
+      const control = BrianControlStyle(
+        padding: EdgeInsetsDirectional.fromSTEB(90, 8, 50, 8),
+      );
+      final base = BrianThemeData.light;
+      final themed = customPadding
+          ? base.copyWith(
+              buttons: const BrianButtonStyles(
+                xsmall: control,
+                small: control,
+                medium: control,
+                large: control,
+              ),
+            )
+          : base.copyWith(
+              spacing: base.spacing.copyWith(x3Point5: 70, x4: 70, x5: 70),
+            );
+      for (final size in BrianButtonSize.values) {
+        for (final direction in TextDirection.values) {
+          final item = group(primary: 'ABCD', secondary: 'EFGH', size: size);
+          await tester.pumpWidget(
+            host(item, theme: base, direction: direction),
+          );
+          expect(rect(tester, 'ABCD').top, rect(tester, 'EFGH').top);
+          await tester.pumpWidget(
+            host(item, theme: themed, direction: direction),
+          );
+          expect(rect(tester, 'ABCD').bottom + 8, rect(tester, 'EFGH').top);
+          expect(rect(tester, 'ABCD').width, 320);
+          await tester.pumpWidget(
+            host(item, theme: themed, direction: direction, width: 600),
+          );
+          expect(rect(tester, 'ABCD').top, rect(tester, 'EFGH').top);
+          expect(tester.takeException(), isNull);
+        }
+      }
+    });
+  }
+
+  testWidgets('명시 패딩이 넓은 간격 토큰보다 우선한다', (tester) async {
+    final base = BrianThemeData.light;
+    final theme = base.copyWith(
+      spacing: base.spacing.copyWith(x4: 70),
+      buttons: const BrianButtonStyles(
+        medium: BrianControlStyle(
+          padding: EdgeInsetsDirectional.fromSTEB(6, 8, 10, 8),
+        ),
+      ),
+    );
+    await tester.pumpWidget(
+      host(
+        group(primary: 'ABCD', secondary: 'EFGH'),
+        theme: theme,
+      ),
+    );
+    expect(rect(tester, 'ABCD').top, rect(tester, 'EFGH').top);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('단일 액션은 전체 너비의 neutralSolid, 두 액션은 보조 weak와 주요 solid', (
     tester,
   ) async {
