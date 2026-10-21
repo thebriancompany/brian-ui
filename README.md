@@ -7,7 +7,7 @@
 Brian UI는 Flutter 기본 위젯 계층으로 만드는 독립 디자인 시스템입니다.
 `brian_ui` 패키지로 디자인 토큰, 테마와 컴포넌트를 제공합니다.
 
-[문서 사이트](https://thebriancompany.github.io/brian-ui/)
+[문서 사이트](https://thebriancompany.github.io/brian-ui/) · [테마 사용자 정의](https://github.com/thebriancompany/brian-ui/blob/develop/doc/theming/overview.md#컴포넌트-내부-레이아웃-사용자-정의)
 
 ## 컴포넌트
 

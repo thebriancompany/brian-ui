@@ -91,7 +91,7 @@ BrianButton.icon(
 지정하면 자식의 설명을 대체합니다. 로딩 중에는 기존 라벨과 함께 loadingLabel을
 live region으로 제공하며 기본 설명은 '처리 중'입니다. 다국어 앱은 해당 값을 번역합니다.
 
-시각적 크기와 터치 영역은 같습니다. 작은 size를 터치 화면에 사용할 때는
+`minimumTouchTarget`을 생략하면 시각적 크기와 터치 영역은 같습니다. 작은 size를 터치 화면에 사용할 때는
 주변 간격과 플랫폼별 터치 영역 요구를 함께 검토합니다. 사용자 정의 테마와
 outline·ghost의 실제 합성 배경에서는 전경 대비를 별도로 확인해야 합니다.
 기본 neutralSolid는 라이트·다크의 기본·눌림 상태에서 전경 대비가 4.5:1 이상입니다.
@@ -103,3 +103,25 @@ outline·ghost의 실제 합성 배경에서는 전경 대비를 별도로 확�
 자동 테스트는 상태·입력·semantics·글자 확대를 검사하며 스크린 리더의 실제
 발화나 모든 플랫폼의 접근성 충족을 보장하지 않습니다.
 
+## 테마 기반 크기와 원형 아이콘 버튼
+
+일반 버튼은 `BrianThemeData.buttons`, 아이콘 버튼은 `iconButtons`에서
+크기별 `BrianControlStyle`을 설정합니다. 원형은 `CircleBorder()`와 정사각형
+최소 크기·대칭 패딩을 사용하며, 부모에서 너비와 높이를 다르게 강제하지 마세요.
+
+```dart
+final theme = BrianThemeData.light.copyWith(
+  iconButtons: const BrianButtonStyles(
+    medium: BrianControlStyle(
+      shape: CircleBorder(),
+      minimumSize: Size.square(40),
+      minimumTouchTarget: Size.square(48),
+      padding: EdgeInsets.all(8),
+      iconSize: 24,
+    ),
+  ),
+);
+```
+
+설정한 테마 아래에서 `BrianButton.icon`을 사용합니다. 공통 적용 규칙은
+`doc/theming/overview.md`에서 확인하세요.

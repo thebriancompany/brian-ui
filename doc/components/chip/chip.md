@@ -7,6 +7,7 @@
 
 | 속성 | 값 | 용도 |
 | --- | --- | --- |
+| tone | neutral / brand | 중립 톤(기본값) / 브랜드 선택 톤 |
 | variant | solid | 채움으로 선택을 강조 |
 | variant | outlineStrong | 강한 외곽선으로 경계를 강조 |
 | variant | outlineWeak | 여러 선택 항목을 차분하게 표시, 기본값 |
@@ -26,6 +27,7 @@
 
 ```dart
 BrianChip(
+  tone: BrianChipTone.brand,
   selected: interests.contains(item),
   onPressed: () => setState(() {
     if (!interests.add(item)) interests.remove(item);
@@ -77,6 +79,24 @@ Tab으로 본문과 삭제 버튼을 탐색하고 Enter·Space로 실행합니�
 중복 실행하지 않습니다. 누름·호버·키보드 포커스를 표시하며, 선택 상태는
 색상 표현과 접근성 상태로 전달합니다.
 
-라이트·다크의 중립 전경·배경·외곽선 토큰을 사용합니다. 선택된 solid는
+기본 neutral 톤은 중립 역할 색상을 사용하며, 선택된 solid는
 `onNeutralSolid`와 `neutralSolid`를 조합합니다. 사용자 정의 테마와 실제
 화면 배경에서는 대비와 포커스 식별성을 별도로 확인하세요.
+
+## 브랜드 선택 톤
+
+`tone: BrianChipTone.brand`는 variant에 관계없이 선택 시 다음 역할을 사용합니다.
+
+| 역할 | 토큰 |
+| --- | --- |
+| 배경 / 눌림·호버 | `background.brandWeak` / `background.brandWeakPressed` |
+| 전경 / 선택선 | `foreground.brandContrast` / `stroke.brandSolid` |
+
+선택 전에는 기존 variant 표현을 사용합니다. 선택 시 장식용 체크를 추가하며
+체크는 접근성 트리에서 제외하고 selected 상태로 전달합니다.
+비활성 역할과 `stroke.focusRing`은 neutral 톤과 같습니다.
+
+## 크기 설정
+
+`BrianThemeData.chips`에서 크기별 `BrianControlStyle`을 설정합니다.
+삭제 버튼은 별도 `iconButtons.xsmall` 설정을 따릅니다.
